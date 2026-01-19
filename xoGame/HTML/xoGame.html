@@ -17,30 +17,28 @@
                 <button type="button" id="clearBoardBtn">Clear board</button>
                 <button type="button" id="clearPlayerListBtn">Clear players list</button>
                 <button type="button" id="showScores">Show scores</button>
+                <button type="button" id="sortNames">Sort by name</button>
+                <button type="button" id="sortScores">Sort by score</button>
 
                 <div class="playersOptions">
-                    <div class="playerDataInput">
-                        <div class="inputBlock">
-                            <label for="player1Name" class="space">Enter name for player-1:</label>
-                            <input type="text" id="player1Name" placeholder="..." required />
-                        </div>
+                    <fieldset>
+                        <legend>Player 1</legend>
 
-                        <div class="inputBlock">
-                            <label for="player1Sign" class="space">Select symbol to play:</label>
-                            <input type="text" id="player1Sign" placeholder="X" value="X" />
-                        </div>
-                    </div>
-                    <div class="playerDataInput">
-                        <div class="inputBlock">
-                            <label for="player2Name" class="space">Enter name for player-2:</label>
-                            <input type="text" id="player2Name" placeholder="..." required />
-                        </div>
+                        <label for="player1Name" class="space">Name:</label>
+                        <input type="text" id="player1Name" placeholder="..." required />
 
-                        <div class="inputBlock">
-                            <label for="player2Sign" class="space">Select symbol to play:</label>
-                            <input type="text" id="player2Sign" placeholder="O" value="O" />
-                        </div>
-                    </div>
+                        <label for="player1Sign" class="space">Win symbol:</label>
+                        <input type="text" id="player1Sign" placeholder="X" value="X" />
+                    </fieldset>
+                    <fieldset>
+                        <legend>Player 2</legend>
+
+                        <label for="player2Name" class="space">Name:</label>
+                        <input type="text" id="player2Name" placeholder="..." required />
+
+                        <label for="player2Sign" class="space">Win symbol:</label>
+                        <input type="text" id="player2Sign" placeholder="O" value="O" />
+                    </fieldset>
 
                     <button type="button" id="startGame">Start a new game</button>
                 </div>

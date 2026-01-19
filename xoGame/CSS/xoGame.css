@@ -18,6 +18,7 @@ h1 {
     padding: 0.5rem;
     background-color: blueviolet;
     border-radius: 0.5rem;
+    align-self: flex-start;
 }
 
 .cell {
@@ -56,18 +57,6 @@ h1 {
     background-color: beige;
 }
 
-.inputBlock {
-    display: flex;
-    flex-direction: row;
-    margin-left: 1rem;
-    margin-right: 0.5rem;
-}
-
-.playerDataInput {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-
 [type="button"] {
     margin: 0.5rem;
     font-size: 1.2rem;
@@ -80,4 +69,14 @@ h1 {
 
 table {
     background-color: beige;
+}
+
+fieldset label,
+fieldset input {
+    display: block; 
+    margin-bottom: 0.5rem;    
+}
+
+fieldset {
+    margin-top: 0.5rem;
 }

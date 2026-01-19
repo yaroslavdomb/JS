@@ -11,6 +11,7 @@ const possibleWinStates = [
 
 const BOARD_SIZE = 9;
 const playerScoreMap = new Map();
+let sortedPlayerScoreMap;
 let isFirstPlayerTurn = true;
 let winCombination = [];
 let winnerData = {};
@@ -19,10 +20,15 @@ let p1Name = "";
 let p2Name = "";
 let p1Sign = "";
 let p2Sign = "";
+let isScoreVisible = false;
+let isSortedByName = false;
+let isSortedByScore = false;
+
+document.getElementById("sortNames").hidden = true;
+document.getElementById("sortScores").hidden = true;
 
 const grid = document.querySelector(".playBoard");
 grid.addEventListener("click", function (event) {
-    
     if (!gameStarted || winCombination.length !== 0 || event.target.innerText !== "") {
         return;
     }
@@ -107,7 +113,7 @@ clearBoardBtn.addEventListener("click", function () {
     const allCellsArr = document.querySelectorAll(".cell");
     for (const currentCell of allCellsArr) {
         currentCell.innerText = "";
-        currentCell.classList = "cell";
+        currentCell.className = "cell";
     }
     winCombination = [];
     gameStarted = false;
@@ -152,6 +158,7 @@ function registration() {
 
     if (!playerScoreMap.has(p1Name)) {
         playerScoreMap.set(p1Name, { name: p1Name, score: 0 });
+        isSortedByName = false;
     }
     p1Sign = document.getElementById("player1Sign").value;
     console.log(p1Name + " will play with " + p1Sign);
@@ -165,6 +172,7 @@ function registration() {
 
     if (!playerScoreMap.has(p2Name)) {
         playerScoreMap.set(p2Name, { name: p2Name, score: 0 });
+        isSortedByName = false;
     }
     p2Sign = document.getElementById("player2Sign").value;
     console.log(p2Name + " will play with " + p2Sign);
@@ -191,18 +199,23 @@ function updateDrawScore() {
     playerScoreMap.get(p2Name).score += 0.5;
 }
 
-let isScoreVisible = false;
 const showScoresBtn = document.getElementById("showScores");
 showScoresBtn.addEventListener("click", function () {
     const out = document.getElementById("scoreListOutput");
-    isScoreVisible = !isScoreVisible;
+    const sortByNameOpt = document.getElementById("sortNames");
+    const sortByScoreOpt = document.getElementById("sortScores");
 
+    isScoreVisible = !isScoreVisible;
     if (isScoreVisible) {
-        showScoresBtn.innerText = "Hide score";
+        showScoresBtn.innerText = "Hide scores";
         createScoreTable();
+        sortByNameOpt.hidden = false;
+        sortByScoreOpt.hidden = false;
         out.hidden = false;
     } else {
-        showScoresBtn.innerText = "Show score";
+        showScoresBtn.innerText = "Show scores";
+        sortByNameOpt.hidden = true;
+        sortByScoreOpt.hidden = true;
         out.innerHTML = "";
         out.hidden = true;
     }
@@ -212,9 +225,11 @@ function createScoreTable() {
     const out = document.getElementById("scoreListOutput");
     const table = document.createElement("table");
     table.border = "1";
+    let scoreDataMap = isSortedByName ? sortedPlayerScoreMap : playerScoreMap;
+
     //create headers from map
     const headerRow = document.createElement("tr");
-    const firstObject = playerScoreMap.values().next().value;
+    const firstObject = scoreDataMap.values().next().value;
     const fieldNames = Object.keys(firstObject);
     fieldNames.forEach((element) => {
         const th = document.createElement("th");
@@ -224,7 +239,7 @@ function createScoreTable() {
     table.appendChild(headerRow);
 
     //fill the data
-    playerScoreMap.forEach((val, key) => {
+    scoreDataMap.forEach((val, key) => {
         const row = document.createElement("tr");
 
         const tdKey = document.createElement("td");
@@ -245,3 +260,10 @@ function refreshScoreTable() {
     out.innerHTML = "";
     createScoreTable();
 }
+
+const sortScoresBtn = document.getElementById("sortNames");
+sortScoresBtn.addEventListener("click", function () {
+    sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => a[0].localeCompare(b[0])));
+    isSortedByName = true;
+    refreshScoreTable();
+});
