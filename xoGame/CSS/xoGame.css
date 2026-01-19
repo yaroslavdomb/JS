@@ -1,0 +1,38 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    background-color: #333333;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+}
+
+.playBoard {
+    display: inline-grid;
+    grid-template-columns: repeat(3, 1fr);    
+    padding: 0.5rem;
+    background-color: blueviolet;
+    border-radius: 0.5rem;
+}
+
+.cell {    
+    width: 12rem;
+    height: 12rem;
+    border: 1px solid black;
+    background-color: beige;
+    color: blue;
+    font-size: 5rem;
+    display: flex;
+    justify-content: center;    
+    align-items: center;    
+}
+
+.cell:hover {
+    background-color: aqua;
+}
