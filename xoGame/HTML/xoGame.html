@@ -14,34 +14,34 @@
             <div class="playBoard"></div>
 
             <div class="options">
-                <button type="button" id="clearBoardBtn">Clear board</button>
-                <button type="button" id="clearPlayerListBtn">Clear players list</button>
-                <button type="button" id="showScores">Show scores</button>
-                <button type="button" id="sortNames">Sort by name</button>
-                <button type="button" id="sortScores">Sort by score</button>
-
                 <div class="playersOptions">
                     <fieldset>
                         <legend>Player 1</legend>
 
-                        <label for="player1Name" class="space">Name:</label>
+                        <label for="player1Name">Name:</label>
                         <input type="text" id="player1Name" placeholder="..." required />
 
-                        <label for="player1Sign" class="space">Win symbol:</label>
+                        <label for="player1Sign">Win symbol:</label>
                         <input type="text" id="player1Sign" placeholder="X" value="X" />
                     </fieldset>
                     <fieldset>
                         <legend>Player 2</legend>
 
-                        <label for="player2Name" class="space">Name:</label>
+                        <label for="player2Name">Name:</label>
                         <input type="text" id="player2Name" placeholder="..." required />
 
-                        <label for="player2Sign" class="space">Win symbol:</label>
+                        <label for="player2Sign">Win symbol:</label>
                         <input type="text" id="player2Sign" placeholder="O" value="O" />
                     </fieldset>
 
                     <button type="button" id="startGame">Start a new game</button>
                 </div>
+
+                <button type="button" id="clearBoardBtn">Clear board</button>
+                <button type="button" id="clearPlayerList">Clear players list</button>
+                <button type="button" id="showScores">Show scores</button>
+                <button type="button" id="sortNames">Sort by name</button>
+                <button type="button" id="sortScores">Sort by score</button>
             </div>
 
             <div id="scoreListOutput"></div>

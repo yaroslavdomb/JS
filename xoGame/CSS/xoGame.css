@@ -55,6 +55,7 @@ h1 {
     flex-direction: column;
     margin: 2rem;
     background-color: beige;
+    align-items: center;
 }
 
 [type="button"] {
@@ -64,7 +65,6 @@ h1 {
     border: 1px solid black;
     border-radius: 0.3rem;
     background-color: #7ef29d;
-    align-self: flex-start;
 }
 
 table {

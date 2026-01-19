@@ -276,3 +276,15 @@ sortScoreBtn.addEventListener("click", function () {
     isSortedByScore = true;
     refreshScoreTable();
 });
+
+const clearPlayerListBtn = document.getElementById("clearPlayerList");
+clearPlayerListBtn.addEventListener("click", function () {
+    if (isSortedByName || isSortedByScore) {
+        sortedPlayerScoreMap.clear();
+    }
+    playerScoreMap.clear();
+    const out = document.getElementById("scoreListOutput");
+    out.innerHTML = "";
+    isSortedByName = false;
+    isSortedByScore = false;
+});
