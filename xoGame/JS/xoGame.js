@@ -22,11 +22,8 @@ let p2Sign = "";
 
 const grid = document.querySelector(".playBoard");
 grid.addEventListener("click", function (event) {
-    if (!gameStarted) {
-        gameStarted = true;
-    }
-
-    if (winCombination.length !== 0 || event.target.innerText !== "") {
+    
+    if (!gameStarted || winCombination.length !== 0 || event.target.innerText !== "") {
         return;
     }
 
@@ -114,6 +111,7 @@ clearBoardBtn.addEventListener("click", function () {
     }
     winCombination = [];
     gameStarted = false;
+    isFirstPlayerTurn = true;
     const p1 = document.getElementById("player1Name");
     p1.value = "";
     const s1 = document.getElementById("player1Sign");
@@ -140,6 +138,7 @@ game.addEventListener("click", function () {
     const regOK = registration();
     if (regOK) {
         hidePlayerOptions();
+        gameStarted = true;
     }
 });
 
