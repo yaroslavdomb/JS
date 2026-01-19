@@ -57,3 +57,12 @@ function markWinCombination() {
         allCellsArr[i].classList.add("winner");
     });
 }
+
+const clearBtn = document.getElementById("clearBtn");
+clearBtn.addEventListener("click", function(){
+    const allCellsArr = document.querySelectorAll(".cell");
+    for (const currentCell of allCellsArr) {
+        currentCell.innerText = "";
+        currentCell.classList = "cell";
+    }
+});
