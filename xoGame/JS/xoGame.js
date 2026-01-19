@@ -225,7 +225,7 @@ function createScoreTable() {
     const out = document.getElementById("scoreListOutput");
     const table = document.createElement("table");
     table.border = "1";
-    let scoreDataMap = isSortedByName ? sortedPlayerScoreMap : playerScoreMap;
+    let scoreDataMap = isSortedByName || isSortedByScore ? sortedPlayerScoreMap : playerScoreMap;
 
     //create headers from map
     const headerRow = document.createElement("tr");
@@ -261,9 +261,18 @@ function refreshScoreTable() {
     createScoreTable();
 }
 
-const sortScoresBtn = document.getElementById("sortNames");
-sortScoresBtn.addEventListener("click", function () {
+const sortNamesBtn = document.getElementById("sortNames");
+sortNamesBtn.addEventListener("click", function () {
     sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => a[0].localeCompare(b[0])));
     isSortedByName = true;
+    isSortedByScore = false;
+    refreshScoreTable();
+});
+
+const sortScoreBtn = document.getElementById("sortScores");
+sortScoreBtn.addEventListener("click", function () {
+    sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => b[1].score - a[1].score));
+    isSortedByName = false;
+    isSortedByScore = true;
     refreshScoreTable();
 });
