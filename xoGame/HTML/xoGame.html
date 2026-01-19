@@ -1,31 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>xoGame</title>
+        <link rel="stylesheet" href="/xoGame/CSS/xoGame.css" />
+        <script src="/xoGame/JS/xoGame.js" defer></script>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>xoGame</title>
-    <link rel="stylesheet" href="/xoGame/CSS/xoGame.css">
-    <script src="/xoGame/JS/xoGame.js" defer></script>
-</head>
+    <body>
+        <h1>XO Game</h1>
 
-<body>
-    <h1>XO Game</h1>
-    
-    <div class="gameContainer">
-        <div class="playBoard"></div>
-        
-        <button type="button" id="clearBtn">Clear board</button>
+        <div class="gamePack">
+            <div class="playBoard"></div>
 
-        <div id="initial">
-            <label for="startPlayWith">I'll play with:
-                <select id="startPlayWith">
-                    <option value="X" selected>X</option>
-                    <option value="O">O</option>
-                </select>
-            </label>
+            <div class="options">
+                <button type="button" id="clearBoardBtn">Clear board</button>
+                <button type="button" id="clearPlayerListBtn">Clear players list</button>
+                <button type="button" id="showScores">Show scores</button>
+
+                <div class="playersOptions">
+                    <div class="playerDataInput">
+                        <div class="inputBlock">
+                            <label for="player1Name" class="space">Enter name for player-1:</label>
+                            <input type="text" id="player1Name" placeholder="..." required />
+                        </div>
+
+                        <div class="inputBlock">
+                            <label for="player1Sign" class="space">Select symbol to play:</label>
+                            <input type="text" id="player1Sign" placeholder="X" value="X" />
+                        </div>
+                    </div>
+                    <div class="playerDataInput">
+                        <div class="inputBlock">
+                            <label for="player2Name" class="space">Enter name for player-2:</label>
+                            <input type="text" id="player2Name" placeholder="..." required />
+                        </div>
+
+                        <div class="inputBlock">
+                            <label for="player2Sign" class="space">Select symbol to play:</label>
+                            <input type="text" id="player2Sign" placeholder="O" value="O" />
+                        </div>
+                    </div>
+
+                    <button type="button" id="startGame">Start the game</button>
+                </div>
+            </div>
+
+            <div id="scoreListOutput"></div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
-
-

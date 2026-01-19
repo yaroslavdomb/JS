@@ -14,13 +14,13 @@ h1 {
 
 .playBoard {
     display: inline-grid;
-    grid-template-columns: repeat(3, 1fr);    
+    grid-template-columns: repeat(3, 1fr);
     padding: 0.5rem;
     background-color: blueviolet;
     border-radius: 0.5rem;
 }
 
-.cell {    
+.cell {
     width: 12rem;
     height: 12rem;
     border: 1px solid black;
@@ -28,8 +28,8 @@ h1 {
     color: blue;
     font-size: 5rem;
     display: flex;
-    justify-content: center;    
-    align-items: center;    
+    justify-content: center;
+    align-items: center;
 }
 
 .takenByO {
@@ -44,29 +44,40 @@ h1 {
     background-color: rgb(243, 219, 37) !important;
 }
 
-#clearBtn {
-    margin-top: 1rem;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 0.3rem;
-    background-color: #f0f0f0;
+.gamePack {
+    display: flex;
+    flex-direction: row;
 }
 
-.gameContainer {
+.options {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    margin: 2rem;
+    background-color: beige;
 }
 
-#initial {
-    padding: 0.5rem 1rem;
-    font-size: 1.2rem;
+.inputBlock {
+    display: flex;
+    flex-direction: row;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+}
+
+.playerDataInput {
     margin-top: 1rem;
-    border: none;
+    margin-bottom: 1rem;
+}
+
+[type="button"] {
+    margin: 0.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: 1px solid black;
     border-radius: 0.3rem;
-    background-color: #f0f0f0;
+    background-color: #7ef29d;
+    align-self: flex-start;
+}
+
+table {
+    background-color: beige;
 }
