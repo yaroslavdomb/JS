@@ -7,44 +7,51 @@ const possibleWinStates = [
 const SYGN_X = "X";
 const SYGN_O = "O";
 const BOARD_SIZE = 9;
-let isTurnToPlayO = true;
+let isTurnToPlayO;
 let winCombination = [];
+let gameStarted = false;
 
 const grid = document.querySelector(".playBoard");
-for (let i = 0 ; i < BOARD_SIZE ; i++) {
-    const divElement = document.createElement("div");
-    divElement.addEventListener("click", function(event) {
 
-        if (event.target.innerText !== "") {
+for (let i = 0 ; i < BOARD_SIZE ; i++) {
+    
+    const divElement = document.createElement("div");
+    divElement.className = "cell";
+
+    divElement.addEventListener("click", function() {
+
+        if (!gameStarted) {
+            hideInitial();
+            isTurnToPlayO = document.querySelector("#startPlayWith").value === SYGN_O;
+            gameStarted = true;
+        }        
+
+        if (winCombination.length !== 0 || this.innerText !== "") {
             return;
         }
-
-        if (isTurnToPlayO) {
-            event.target.innerText = SYGN_O;
-            event.target.classList.add("takenByO");      
-        } else {
-            event.target.innerText = SYGN_X;
-            event.target.classList.add("takenByX");
-        }
         
-        isTurnToPlayO = !isTurnToPlayO;
-        if (isGameFinished()) {
-            markWinCombination();
+        const possibleWinSygn = isTurnToPlayO ? SYGN_O : SYGN_X;
+        this.innerText = possibleWinSygn;
+        this.classList.add(isTurnToPlayO ? "takenByO" : "takenByX");
+        
+        if (isGameFinished(possibleWinSygn)) {
+            markWinCombination();            
+            showWinMessage(possibleWinSygn);
+            showOptions();
         }
+
+        isTurnToPlayO = !isTurnToPlayO;
     });
 
-    divElement.className = "cell";
     grid.appendChild(divElement);
 }
 
-function isGameFinished() {
+function isGameFinished(possibleWinSygn) {
     
-    const possibleWinSygn = isTurnToPlayO ? SYGN_X : SYGN_O;
     const allCellsArr = document.querySelectorAll(".cell");
     for (const currentState of possibleWinStates) {
         if (currentState.every(i => allCellsArr[i].innerText === possibleWinSygn)) {
-            winCombination = currentState;
-            alert (possibleWinSygn + " WINS");
+            winCombination = currentState;            
             return true;
         }
     }
@@ -63,6 +70,28 @@ clearBtn.addEventListener("click", function(){
     const allCellsArr = document.querySelectorAll(".cell");
     for (const currentCell of allCellsArr) {
         currentCell.innerText = "";
-        currentCell.classList = "cell";
+        currentCell.classList = "cell";        
     }
+    winCombination = [];
+    gameStarted = false;
+    showOptions();
 });
+
+function hideInitial () {
+    const initialDiv = document.querySelector("#initial");
+    initialDiv.hidden = true;
+}
+
+function showWinMessage(possibleWinSygn) {
+    setTimeout(() => { alert (possibleWinSygn + " WINS");}, 0);
+}
+
+function showOptions() {
+    //show first step selection
+    const initialDiv = document.querySelector("#initial");
+    initialDiv.hidden = false;
+
+    //show clear button
+    const clearBtn = document.getElementById("clearBtn");
+    clearBtn.hidden = false;
+}

@@ -32,10 +32,6 @@ h1 {
     align-items: center;    
 }
 
-.cell:hover {
-    background-color: aqua;
-}
-
 .takenByO {
     background-color: rgb(131, 247, 30);
 }
@@ -50,6 +46,7 @@ h1 {
 
 #clearBtn {
     margin-top: 1rem;
+    margin-left: 1rem;
     padding: 0.5rem 1rem;
     font-size: 1.2rem;
     cursor: pointer;
@@ -63,4 +60,13 @@ h1 {
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+}
+
+#initial {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 0.3rem;
+    background-color: #f0f0f0;
 }
