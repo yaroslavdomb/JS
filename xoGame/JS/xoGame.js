@@ -27,6 +27,7 @@ const gameState = {
     p2Sign: null,
     isScoreVisible: false,
     isScoreMapSorted: false,
+    isScoreTableCreated: false,
     isScoreInfoCreated: false,
 };
 
@@ -173,6 +174,7 @@ function playersRegistration() {
     if (!playerScoreMap.has(p1TempName)) {
         playerScoreMap.set(p1TempName, { name: p1TempName, score: 0 });
         gameState.isScoreMapSorted = false;
+        gameState.isScoreTableCreated = false;
     }
 
     gameState.p2Name = p2TempName;
@@ -180,6 +182,7 @@ function playersRegistration() {
     if (!playerScoreMap.has(p2TempName)) {
         playerScoreMap.set(p2TempName, { name: p2TempName, score: 0 });
         gameState.isScoreMapSorted = false;
+        gameState.isScoreTableCreated = false;
     }
 
     return true;
@@ -207,7 +210,7 @@ function updateDrawScore() {
     //update original table
     playerScoreMap.get(gameState.p1Name).score += POINTS_FOR_DRAW;
     playerScoreMap.get(gameState.p2Name).score += POINTS_FOR_DRAW;
-
+    
     //refresh sorted map
     if (gameState.isScoreMapSorted) {
         sortedPlayerScoreMap = sortMapByScore();
@@ -234,12 +237,15 @@ showScoresBtn.addEventListener("click", function () {
         showScoresBtn.innerText = "Show scores";
         sortByNameOpt.hidden = true;
         sortByScoreOpt.hidden = true;
-        out.innerHTML = "";
         out.hidden = true;
     }
 });
 
 function createScoreTable() {
+    if (gameState.isScoreTableCreated) {
+        return true;
+    }
+
     const out = document.getElementById("scoreListOutput");
     const table = document.createElement("table");
     table.border = "1";
@@ -283,12 +289,12 @@ function createScoreTable() {
 
     out.appendChild(table);
 
+    gameState.isScoreTableCreated = true;
     return true;
 }
 
 function refreshScoreTable() {
-    const out = document.getElementById("scoreListOutput");
-    out.querySelector("table")?.remove();
+    removeScoreTable();
     createScoreTable();
 }
 
@@ -316,10 +322,15 @@ clearPlayerListBtn.addEventListener("click", function () {
         sortedPlayerScoreMap.clear();
     }
     playerScoreMap.clear();
-    const out = document.getElementById("scoreListOutput");
-    out.innerHTML = "";
-    gameState.isScoreMapSorted = false;
+    removeScoreTable();
+    gameState.isScoreMapSorted = false;    
 });
+
+function removeScoreTable() {
+    const out = document.getElementById("scoreListOutput");
+    out.querySelector("table")?.remove();
+    gameState.isScoreTableCreated = false;
+}
 
 function showTurnOfPlayer() {
     if (!gameState.started) {
@@ -353,26 +364,25 @@ function isGameFinished(possibleWinSign) {
         markWinCombination();
         showWinMessage();
         updateWinnerScore();
-        clearNextTurnFields();
-        unfreezePlayerOptions();
-        unfreezePlayerList();
-        if (gameState.isScoreVisible) {
-            refreshScoreTable();
-        }
+        finalizeGame();
         return true;
     } else if (isBoardFull()) {
         updateDrawScore();
         showDrawMessage();
-        clearNextTurnFields();
-        unfreezePlayerOptions();
-        unfreezePlayerList();
-        if (gameState.isScoreVisible) {
-            refreshScoreTable();
-        }
+        finalizeGame();
         return true;
     }
 
     return false;
+}
+
+function finalizeGame() {
+    clearNextTurnFields();
+    unfreezePlayerOptions();
+    unfreezePlayerList();
+    if (gameState.isScoreVisible) {
+        refreshScoreTable();
+    }
 }
 
 function printData() {
