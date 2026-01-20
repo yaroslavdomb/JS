@@ -106,6 +106,7 @@ function clearBoard(clearAll = true) {
     gameState.started = false;
     gameState.firstPlayerTurn = true;
     gameState.winnerData = null;
+    unfreezePlayerList();
 
     if (clearAll) {
         const p1 = document.getElementById("player1Name");
@@ -136,6 +137,7 @@ game.addEventListener("click", function () {
     if (registrationPassed) {
         clearBoard(false);
         freezePlayerOptions();
+        freezePlayerList();
         gameState.started = true;
         showTurnOfPlayer();
     }
@@ -350,6 +352,7 @@ function isGameFinished(possibleWinSign) {
         updateWinnerScore();
         clearNextTurnFields();
         unfreezePlayerOptions();
+        unfreezePlayerList();
         if (gameState.isScoreVisible) {
             refreshScoreTable();
         }
@@ -359,6 +362,7 @@ function isGameFinished(possibleWinSign) {
         showDrawMessage();
         clearNextTurnFields();
         unfreezePlayerOptions();
+        unfreezePlayerList();
         if (gameState.isScoreVisible) {
             refreshScoreTable();
         }
@@ -378,4 +382,12 @@ function printData() {
 
 function populateWinCombination(winState) {
     gameState.winCombination = winState;
+}
+
+function freezePlayerList() {
+    document.getElementById("clearPlayerList").disabled = true;
+}
+
+function unfreezePlayerList() {
+    document.getElementById("clearPlayerList").disabled = false;
 }
