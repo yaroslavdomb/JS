@@ -23,8 +23,7 @@ const gameState = {
     p2Sign: null,
     isScoreVisible: false,
     isSortedByName: false,
-    isSortedByScore: false,
-    failureCounter: 3
+    isSortedByScore: false
 };
 
 let sortedPlayerScoreMap;
