@@ -27,6 +27,7 @@ const gameState = {
     p2Sign: null,
     isScoreVisible: false,
     isScoreMapSorted: false,
+    isScoreInfoCreated: false,
 };
 
 let sortedPlayerScoreMap;
@@ -224,7 +225,7 @@ showScoresBtn.addEventListener("click", function () {
         showScoresBtn.innerText = "Hide scores";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
-            createInfoForScore();
+            createScoreInfo();
             sortByNameOpt.hidden = false;
             sortByScoreOpt.hidden = false;
             out.hidden = false;
@@ -287,9 +288,8 @@ function createScoreTable() {
 
 function refreshScoreTable() {
     const out = document.getElementById("scoreListOutput");
-    out.innerHTML = "";
+    out.querySelector("table")?.remove();
     createScoreTable();
-    createInfoForScore();
 }
 
 const sortNamesBtn = document.getElementById("sortNames");
@@ -395,7 +395,15 @@ function unfreezePlayerList() {
     document.getElementById("clearPlayerList").disabled = false;
 }
 
-function createInfoForScore() {
+/*
+This is static HTML code, so it's better to be created once
+and used each time when need
+*/
+function createScoreInfo() {
+    if (gameState.isScoreInfoCreated) {
+        return;
+    }
+
     const out = document.getElementById("scoreListOutput");
 
     const divElem = document.createElement("div");
@@ -416,6 +424,8 @@ function createInfoForScore() {
     fieldsetElem.appendChild(winPoints);
     fieldsetElem.appendChild(drawPoints);
     fieldsetElem.appendChild(loosePoints);
-    divElem.appendChild(fieldsetElem);  
+    divElem.appendChild(fieldsetElem);
     out.appendChild(divElem);
+
+    gameState.isScoreInfoCreated = true;
 }
