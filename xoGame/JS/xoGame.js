@@ -38,7 +38,7 @@ grid.addEventListener("click", function (event) {
     event.target.classList.add(isFirstPlayerTurn ? "takenByO" : "takenByX");
 
     if (isGameFinished(possibleWinSign)) {
-        return
+        return;
     } else {
         isFirstPlayerTurn = !isFirstPlayerTurn;
         showTurnOfPlayer();
@@ -138,7 +138,6 @@ game.addEventListener("click", function () {
 });
 
 function registration() {
-    
     //First player
     p1Name = document.getElementById("player1Name").value;
     if (p1Name === null || p1Name === undefined || p1Name.trim() === "") {
@@ -151,7 +150,7 @@ function registration() {
         isSortedByName = false;
     }
     p1Sign = document.getElementById("player1Sign").value;
-    
+
     //Second player
     p2Name = document.getElementById("player2Name").value;
     if (p2Name === null || p2Name === undefined || p2Name.trim() === "") {
@@ -164,7 +163,7 @@ function registration() {
         isSortedByName = false;
     }
     p2Sign = document.getElementById("player2Sign").value;
-    
+
     return true;
 }
 
@@ -177,10 +176,9 @@ function freezePlayerOptions() {
 }
 
 function updateWinnerScore() {
-    
     //update original table
     playerScoreMap.get(winnerData.name).score += 1;
-    
+
     //refresh sorted map
     if (isSortedByScore) {
         sortedPlayerScoreMap = sortByScoreMap();
@@ -188,11 +186,10 @@ function updateWinnerScore() {
 }
 
 function updateDrawScore() {
-    
     //update original table
     playerScoreMap.get(p1Name).score += 0.5;
     playerScoreMap.get(p2Name).score += 0.5;
-    
+
     //refresh sorted map
     if (isSortedByScore) {
         sortedPlayerScoreMap = sortByScoreMap();
@@ -286,7 +283,7 @@ sortScoreBtn.addEventListener("click", function () {
     refreshScoreTable();
 });
 
-function sortByScoreMap () {
+function sortByScoreMap() {
     return new Map([...playerScoreMap.entries()].sort((a, b) => b[1].score - a[1].score));
 }
 
@@ -323,7 +320,6 @@ function clearNextTurnFields() {
 }
 
 function isGameFinished(possibleWinSign) {
-
     if (isGameFinishedDueToWin(possibleWinSign)) {
         populateWinnerData();
         markWinCombination();
@@ -345,4 +341,6 @@ function isGameFinished(possibleWinSign) {
         }
         return true;
     }
+
+    return false;
 }
