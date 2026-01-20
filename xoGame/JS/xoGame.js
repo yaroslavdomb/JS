@@ -10,6 +10,9 @@ const possibleWinStates = [
 ];
 
 const BOARD_SIZE = 9;
+const POINTS_FOR_WIN = 2;
+const POINTS_FOR_DRAW = 0.5;
+
 const cellsArr = [];
 const playerScoreMap = new Map();
 const gameState = {
@@ -22,8 +25,7 @@ const gameState = {
     p1Sign: null,
     p2Sign: null,
     isScoreVisible: false,
-    isSortedByName: false,
-    isSortedByScore: false
+    isScoreMapSorted: false,
 };
 
 let sortedPlayerScoreMap;
@@ -56,14 +58,13 @@ for (let i = 0; i < BOARD_SIZE; i++) {
     grid.appendChild(divElement);
 }
 
-function isGameFinishedDueToWin(possibleWinSign) {
+function getWinCombination(possibleWinSign) {
     for (const currentState of possibleWinStates) {
         if (currentState.every((i) => cellsArr[i].innerText === possibleWinSign)) {
-            gameState.winCombination = currentState;
-            return true;
+            return currentState;
         }
     }
-    return false;
+    return null;
 }
 
 function populateWinnerData() {
@@ -78,8 +79,8 @@ function populateWinnerData() {
 }
 
 //no empty space to set a new values
-function isAnyEmptyCellOnGameboard() {
-    return cellsArr.some((element) => element.innerText === "");
+function isBoardFull() {
+    return cellsArr.every((element) => element.innerText !== "");
 }
 
 function showDrawMessage() {
@@ -95,24 +96,29 @@ function markWinCombination() {
 }
 
 const clearBoardBtn = document.getElementById("clearBoardBtn");
-clearBoardBtn.addEventListener("click", function () {
+clearBoardBtn.addEventListener("click", clearBoard);
+function clearBoard(clearAll = true) {
     for (const currentCell of cellsArr) {
         currentCell.innerText = "";
         currentCell.className = "cell";
     }
     gameState.winCombination = [];
     gameState.started = false;
-    gameState.firstPlayerTurn = 0;
-    const p1 = document.getElementById("player1Name");
-    p1.value = "";
-    const s1 = document.getElementById("player1Sign");
-    s1.value = "X";
-    const p2 = document.getElementById("player2Name");
-    p2.value = "";
-    const s2 = document.getElementById("player2Sign");
-    s2.value = "O";
-    unfreezePlayerOptions();
-});
+    gameState.firstPlayerTurn = true;
+    gameState.winnerData = null;
+
+    if (clearAll) {
+        const p1 = document.getElementById("player1Name");
+        p1.value = "";
+        const s1 = document.getElementById("player1Sign");
+        s1.value = "X";
+        const p2 = document.getElementById("player2Name");
+        p2.value = "";
+        const s2 = document.getElementById("player2Sign");
+        s2.value = "O";
+        unfreezePlayerOptions();
+    }
+}
 
 /*
 Need to set timeout as last turn blocked by alert message
@@ -126,45 +132,52 @@ function showWinMessage() {
 
 const game = document.getElementById("startGame");
 game.addEventListener("click", function () {
-    const regOK = registration();
-    if (regOK) {
+    const registrationPassed = playersRegistration();
+    if (registrationPassed) {
+        clearBoard(false);
         freezePlayerOptions();
         gameState.started = true;
+        showTurnOfPlayer();
     }
 });
 
-function registration() {
-    //First player
-    gameState.p1Name = document.getElementById("player1Name").value;
-    if (gameState.p1Name === null || gameState.p1Name === undefined || gameState.p1Name.trim() === "") {
-        alert("Please provide player-1 name!");
+function playersRegistration() {
+    //Gathering info for first player
+    let p1TempName = document.getElementById("player1Name").value;
+    if (p1TempName === null || p1TempName === undefined || p1TempName.trim() === "") {
+        alert("Please provide player#1 name!");
         return false;
     }
+    let p1TempSign = document.getElementById("player1Sign").value;
 
-    if (!playerScoreMap.has(gameState.p1Name)) {
-        playerScoreMap.set(gameState.p1Name, { name: gameState.p1Name, score: 0 });
-        gameState.isSortedByName = false;
-    }
-    gameState.p1Sign = document.getElementById("player1Sign").value;
-
-    //Second player
-    gameState.p2Name = document.getElementById("player2Name").value;
-    if (gameState.p2Name === null || gameState.p2Name === undefined || gameState.p2Name.trim() === "") {
-        alert("Please provide player-2 name!");
+    let p2TempName = document.getElementById("player2Name").value;
+    if (p2TempName === null || p2TempName === undefined || p2TempName.trim() === "") {
+        alert("Please provide player#2 name!");
+        return false;
+    } else if (p1TempName === p2TempName) {
+        alert("Same names, not good, not good");
         return false;
     }
-
-    if (!playerScoreMap.has(gameState.p2Name)) {
-        playerScoreMap.set(gameState.p2Name, { name: gameState.p2Name, score: 0 });
-        gameState.isSortedByName = false;
-    }
-    gameState.p2Sign = document.getElementById("player2Sign").value;
-
-    if (gameState.p1Sign === gameState.p2Sign ) {
+    let p2TempSign = document.getElementById("player2Sign").value;
+    if (p1TempSign === p2TempSign) {
         alert("No-no-no, you can't play with the same sign!!!");
         return false;
-    }        
-    
+    }
+
+    gameState.p1Name = p1TempName;
+    gameState.p1Sign = p1TempSign;
+    if (!playerScoreMap.has(p1TempName)) {
+        playerScoreMap.set(p1TempName, { name: p1TempName, score: 0 });
+        gameState.isScoreMapSorted = false;
+    }
+
+    gameState.p2Name = p2TempName;
+    gameState.p2Sign = p2TempSign;
+    if (!playerScoreMap.has(p2TempName)) {
+        playerScoreMap.set(p2TempName, { name: p2TempName, score: 0 });
+        gameState.isScoreMapSorted = false;
+    }
+
     return true;
 }
 
@@ -178,22 +191,22 @@ function freezePlayerOptions() {
 
 function updateWinnerScore() {
     //update original table
-    playerScoreMap.get(gameState.winnerData.name).score += 1;
+    playerScoreMap.get(gameState.winnerData.name).score += POINTS_FOR_WIN;
 
     //refresh sorted map
-    if (gameState.isSortedByScore) {
-        sortedPlayerScoreMap = sortByScoreMap();
+    if (gameState.isScoreMapSorted) {
+        sortedPlayerScoreMap = sortMapByScore();
     }
 }
 
 function updateDrawScore() {
     //update original table
-    playerScoreMap.get(gameState.p1Name).score += 0.5;
-    playerScoreMap.get(gameState.p2Name).score += 0.5;
+    playerScoreMap.get(gameState.p1Name).score += POINTS_FOR_DRAW;
+    playerScoreMap.get(gameState.p2Name).score += POINTS_FOR_DRAW;
 
     //refresh sorted map
-    if (gameState.isSortedByScore) {
-        sortedPlayerScoreMap = sortByScoreMap();
+    if (gameState.isScoreMapSorted) {
+        sortedPlayerScoreMap = sortMapByScore();
     }
 }
 
@@ -225,7 +238,13 @@ function createScoreTable() {
     const out = document.getElementById("scoreListOutput");
     const table = document.createElement("table");
     table.border = "1";
-    let scoreDataMap = gameState.isSortedByName || gameState.isSortedByScore ? sortedPlayerScoreMap : playerScoreMap;
+
+    let scoreDataMap;
+    if (gameState.isScoreMapSorted) {
+        scoreDataMap = sortedPlayerScoreMap ?? playerScoreMap;
+    } else {
+        scoreDataMap = playerScoreMap;
+    }
 
     //create headers from map
     const headerRow = document.createElement("tr");
@@ -271,36 +290,37 @@ function refreshScoreTable() {
 const sortNamesBtn = document.getElementById("sortNames");
 sortNamesBtn.addEventListener("click", function () {
     sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => a[0].localeCompare(b[0])));
-    gameState.isSortedByName = true;
-    gameState.isSortedByScore = false;
+    gameState.isScoreMapSorted = true;
     refreshScoreTable();
 });
 
 const sortScoreBtn = document.getElementById("sortScores");
 sortScoreBtn.addEventListener("click", function () {
-    sortedPlayerScoreMap = sortByScoreMap();
-    gameState.isSortedByName = false;
-    gameState.isSortedByScore = true;
+    sortedPlayerScoreMap = sortMapByScore();
+    gameState.isScoreMapSorted = true;
     refreshScoreTable();
 });
 
-function sortByScoreMap() {
+function sortMapByScore() {
     return new Map([...playerScoreMap.entries()].sort((a, b) => b[1].score - a[1].score));
 }
 
 const clearPlayerListBtn = document.getElementById("clearPlayerList");
 clearPlayerListBtn.addEventListener("click", function () {
-    if (gameState.isSortedByName || gameState.isSortedByScore) {
+    if (sortedPlayerScoreMap instanceof Map) {
         sortedPlayerScoreMap.clear();
     }
     playerScoreMap.clear();
     const out = document.getElementById("scoreListOutput");
     out.innerHTML = "";
-    gameState.isSortedByName = false;
-    gameState.isSortedByScore = false;
+    gameState.isScoreMapSorted = false;
 });
 
 function showTurnOfPlayer() {
+    if (!gameState.started) {
+        return;
+    }
+
     const nextName = document.getElementById("nextTurnPlayerName");
     const nextSign = document.getElementById("nextTurnPlayerSign");
 
@@ -321,8 +341,10 @@ function clearNextTurnFields() {
 }
 
 function isGameFinished(possibleWinSign) {
-    if (isGameFinishedDueToWin(possibleWinSign)) {
+    let winState = getWinCombination(possibleWinSign);
+    if (winState !== null) {
         populateWinnerData();
+        populateWinCombination(winState);
         markWinCombination();
         showWinMessage();
         updateWinnerScore();
@@ -332,7 +354,7 @@ function isGameFinished(possibleWinSign) {
             refreshScoreTable();
         }
         return true;
-    } else if (!isAnyEmptyCellOnGameboard()) {
+    } else if (isBoardFull()) {
         updateDrawScore();
         showDrawMessage();
         clearNextTurnFields();
@@ -352,4 +374,8 @@ function printData() {
     console.log("winner combination = " + gameState.winCombination);
     console.log("firstPlayerTurn = " + gameState.firstPlayerTurn);
     console.log("started = " + gameState.started);
+}
+
+function populateWinCombination(winState) {
+    gameState.winCombination = winState;
 }
