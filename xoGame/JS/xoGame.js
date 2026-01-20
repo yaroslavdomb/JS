@@ -12,6 +12,7 @@ const possibleWinStates = [
 const BOARD_SIZE = 9;
 const POINTS_FOR_WIN = 2;
 const POINTS_FOR_DRAW = 0.5;
+const POINTS_FOR_LOOSE = 0;
 
 const cellsArr = [];
 const playerScoreMap = new Map();
@@ -223,6 +224,7 @@ showScoresBtn.addEventListener("click", function () {
         showScoresBtn.innerText = "Hide scores";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
+            createInfoForScore();
             sortByNameOpt.hidden = false;
             sortByScoreOpt.hidden = false;
             out.hidden = false;
@@ -287,6 +289,7 @@ function refreshScoreTable() {
     const out = document.getElementById("scoreListOutput");
     out.innerHTML = "";
     createScoreTable();
+    createInfoForScore();
 }
 
 const sortNamesBtn = document.getElementById("sortNames");
@@ -390,4 +393,29 @@ function freezePlayerList() {
 
 function unfreezePlayerList() {
     document.getElementById("clearPlayerList").disabled = false;
+}
+
+function createInfoForScore() {
+    const out = document.getElementById("scoreListOutput");
+
+    const divElem = document.createElement("div");
+    const fieldsetElem = document.createElement("fieldset");
+    const legendElem = document.createElement("legend");
+    legendElem.innerText = "Scores Info";
+
+    const winPoints = document.createElement("label");
+    winPoints.innerText = "Points for each win: " + POINTS_FOR_WIN;
+
+    const drawPoints = document.createElement("label");
+    drawPoints.innerText = "Points for each draw: " + POINTS_FOR_DRAW;
+
+    const loosePoints = document.createElement("label");
+    loosePoints.innerText = "Points for each loose: " + POINTS_FOR_LOOSE;
+
+    fieldsetElem.appendChild(legendElem);
+    fieldsetElem.appendChild(winPoints);
+    fieldsetElem.appendChild(drawPoints);
+    fieldsetElem.appendChild(loosePoints);
+    divElem.appendChild(fieldsetElem);  
+    out.appendChild(divElem);
 }

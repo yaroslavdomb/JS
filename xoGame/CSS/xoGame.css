@@ -72,13 +72,13 @@ table {
     background-color: beige;
 }
 
-fieldset label,
-fieldset input {
+.playersOptions fieldset label,
+.playersOptions fieldset input {
     display: block;
     margin-bottom: 0.5rem;
 }
 
-fieldset {
+.playersOptions fieldset {
     margin-top: 0.5rem;
 }
 
@@ -113,4 +113,24 @@ fieldset {
 legend {
     font-size: larger;
     font-weight: bolder;
+}
+
+#scoreListOutput {
+    background-color: beige;
+}
+
+#scoreListOutput fieldset {
+    margin-top: 1rem;
+    padding: 0.2rem;
+}
+
+#scoreListOutput fieldset legend {
+    padding: 0 0.5rem;
+}
+
+#scoreListOutput fieldset label {
+    text-align: left;
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
 }
