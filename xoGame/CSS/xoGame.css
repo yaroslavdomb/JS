@@ -53,7 +53,8 @@ h1 {
 .options {
     display: flex;
     flex-direction: column;
-    margin: 2rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
     background-color: beige;
     align-items: center;
 }
@@ -73,10 +74,43 @@ table {
 
 fieldset label,
 fieldset input {
-    display: block; 
-    margin-bottom: 0.5rem;    
+    display: block;
+    margin-bottom: 0.5rem;
 }
 
 fieldset {
     margin-top: 0.5rem;
+}
+
+.next-turn {
+    width: 95%;
+    box-sizing: border-box;
+}
+
+.next-turn .row {
+    margin-bottom: 0.3rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.next-turn .label {
+    white-space: nowrap;
+}
+
+.next-turn .output {
+    padding: 0.2rem 0.4rem;
+    border: 1px solid #999;
+    border-radius: 0.2rem;
+    min-height: 1.4em;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+legend {
+    font-size: larger;
+    font-weight: bolder;
 }

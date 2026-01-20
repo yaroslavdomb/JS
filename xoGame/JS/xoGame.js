@@ -37,23 +37,12 @@ grid.addEventListener("click", function (event) {
     event.target.innerText = possibleWinSign;
     event.target.classList.add(isFirstPlayerTurn ? "takenByO" : "takenByX");
 
-    if (isGameFinishedDueToWin(possibleWinSign)) {
-        populateWinnerData();
-        markWinCombination();
-        showWinMessage();
-        updateWinnerScore();
-        if (isScoreVisible) {
-            refreshScoreTable();
-        }
-    } else if (!isAnyEmptyCellOnGameboard()) {
-        updateDrawScore();
-        showDrawMessage();
-        if (isScoreVisible) {
-            refreshScoreTable();
-        }
+    if (isGameFinished(possibleWinSign)) {
+        return
+    } else {
+        isFirstPlayerTurn = !isFirstPlayerTurn;
+        showTurnOfPlayer();
     }
-
-    isFirstPlayerTurn = !isFirstPlayerTurn;
 });
 
 for (let i = 0; i < BOARD_SIZE; i++) {
@@ -126,7 +115,7 @@ clearBoardBtn.addEventListener("click", function () {
     p2.value = "";
     const s2 = document.getElementById("player2Sign");
     s2.value = "O";
-    showPlayerOptions();
+    unfreezePlayerOptions();
 });
 
 /*
@@ -143,12 +132,13 @@ const game = document.getElementById("startGame");
 game.addEventListener("click", function () {
     const regOK = registration();
     if (regOK) {
-        hidePlayerOptions();
+        freezePlayerOptions();
         gameStarted = true;
     }
 });
 
 function registration() {
+    
     //First player
     p1Name = document.getElementById("player1Name").value;
     if (p1Name === null || p1Name === undefined || p1Name.trim() === "") {
@@ -161,8 +151,7 @@ function registration() {
         isSortedByName = false;
     }
     p1Sign = document.getElementById("player1Sign").value;
-    console.log(p1Name + " will play with " + p1Sign);
-
+    
     //Second player
     p2Name = document.getElementById("player2Name").value;
     if (p2Name === null || p2Name === undefined || p2Name.trim() === "") {
@@ -175,28 +164,39 @@ function registration() {
         isSortedByName = false;
     }
     p2Sign = document.getElementById("player2Sign").value;
-    console.log(p2Name + " will play with " + p2Sign);
-
+    
     return true;
 }
 
-function showPlayerOptions() {
-    const pOptions = document.querySelector(".playersOptions");
-    pOptions.hidden = false;
+function unfreezePlayerOptions() {
+    document.querySelectorAll(".playersOptions input, .playersOptions button").forEach((el) => (el.disabled = false));
 }
 
-function hidePlayerOptions() {
-    const pOptions = document.querySelector(".playersOptions");
-    pOptions.hidden = true;
+function freezePlayerOptions() {
+    document.querySelectorAll(".playersOptions input, .playersOptions button").forEach((el) => (el.disabled = true));
 }
 
 function updateWinnerScore() {
+    
+    //update original table
     playerScoreMap.get(winnerData.name).score += 1;
+    
+    //refresh sorted map
+    if (isSortedByScore) {
+        sortedPlayerScoreMap = sortByScoreMap();
+    }
 }
 
 function updateDrawScore() {
+    
+    //update original table
     playerScoreMap.get(p1Name).score += 0.5;
     playerScoreMap.get(p2Name).score += 0.5;
+    
+    //refresh sorted map
+    if (isSortedByScore) {
+        sortedPlayerScoreMap = sortByScoreMap();
+    }
 }
 
 const showScoresBtn = document.getElementById("showScores");
@@ -208,10 +208,12 @@ showScoresBtn.addEventListener("click", function () {
     isScoreVisible = !isScoreVisible;
     if (isScoreVisible) {
         showScoresBtn.innerText = "Hide scores";
-        createScoreTable();
-        sortByNameOpt.hidden = false;
-        sortByScoreOpt.hidden = false;
-        out.hidden = false;
+        let isTableCreated = createScoreTable();
+        if (isTableCreated) {
+            sortByNameOpt.hidden = false;
+            sortByScoreOpt.hidden = false;
+            out.hidden = false;
+        }
     } else {
         showScoresBtn.innerText = "Show scores";
         sortByNameOpt.hidden = true;
@@ -230,6 +232,10 @@ function createScoreTable() {
     //create headers from map
     const headerRow = document.createElement("tr");
     const firstObject = scoreDataMap.values().next().value;
+    if (firstObject === null || firstObject === undefined) {
+        console.log("Score table is empty");
+        return false;
+    }
     const fieldNames = Object.keys(firstObject);
     fieldNames.forEach((element) => {
         const th = document.createElement("th");
@@ -252,7 +258,10 @@ function createScoreTable() {
 
         table.appendChild(row);
     });
+
     out.appendChild(table);
+
+    return true;
 }
 
 function refreshScoreTable() {
@@ -271,11 +280,15 @@ sortNamesBtn.addEventListener("click", function () {
 
 const sortScoreBtn = document.getElementById("sortScores");
 sortScoreBtn.addEventListener("click", function () {
-    sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => b[1].score - a[1].score));
+    sortedPlayerScoreMap = sortByScoreMap();
     isSortedByName = false;
     isSortedByScore = true;
     refreshScoreTable();
 });
+
+function sortByScoreMap () {
+    return new Map([...playerScoreMap.entries()].sort((a, b) => b[1].score - a[1].score));
+}
 
 const clearPlayerListBtn = document.getElementById("clearPlayerList");
 clearPlayerListBtn.addEventListener("click", function () {
@@ -288,3 +301,48 @@ clearPlayerListBtn.addEventListener("click", function () {
     isSortedByName = false;
     isSortedByScore = false;
 });
+
+function showTurnOfPlayer() {
+    const nextName = document.getElementById("nextTurnPlayerName");
+    const nextSign = document.getElementById("nextTurnPlayerSign");
+
+    if (isFirstPlayerTurn) {
+        nextName.innerText = p1Name;
+        nextSign.innerText = p1Sign;
+    } else {
+        nextName.innerText = p2Name;
+        nextSign.innerText = p2Sign;
+    }
+}
+
+function clearNextTurnFields() {
+    const nextName = document.getElementById("nextTurnPlayerName");
+    const nextSign = document.getElementById("nextTurnPlayerSign");
+    nextName.innerText = "";
+    nextSign.innerText = "";
+}
+
+function isGameFinished(possibleWinSign) {
+
+    if (isGameFinishedDueToWin(possibleWinSign)) {
+        populateWinnerData();
+        markWinCombination();
+        showWinMessage();
+        updateWinnerScore();
+        clearNextTurnFields();
+        unfreezePlayerOptions();
+        if (isScoreVisible) {
+            refreshScoreTable();
+        }
+        return true;
+    } else if (!isAnyEmptyCellOnGameboard()) {
+        updateDrawScore();
+        showDrawMessage();
+        clearNextTurnFields();
+        unfreezePlayerOptions();
+        if (isScoreVisible) {
+            refreshScoreTable();
+        }
+        return true;
+    }
+}
