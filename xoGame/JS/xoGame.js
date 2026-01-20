@@ -24,6 +24,7 @@ const gameState = {
     isScoreVisible: false,
     isSortedByName: false,
     isSortedByScore: false,
+    failureCounter: 3
 };
 
 let sortedPlayerScoreMap;
@@ -44,10 +45,8 @@ grid.addEventListener("click", function (event) {
     if (isGameFinished(possibleWinSign)) {
         return;
     } else {
-        printData();
         gameState.firstPlayerTurn = !gameState.firstPlayerTurn;
         showTurnOfPlayer();
-        printData();
     }
 });
 
@@ -162,6 +161,11 @@ function registration() {
     }
     gameState.p2Sign = document.getElementById("player2Sign").value;
 
+    if (gameState.p1Sign === gameState.p2Sign ) {
+        alert("No-no-no, you can't play with the same sign!!!");
+        return false;
+    }        
+    
     return true;
 }
 
