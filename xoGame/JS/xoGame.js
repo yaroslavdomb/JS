@@ -10,52 +10,58 @@ const possibleWinStates = [
 ];
 
 const BOARD_SIZE = 9;
+const cellsArr = [];
 const playerScoreMap = new Map();
+const gameState = {
+    winCombination: [],
+    winnerData: null,
+    firstPlayerTurn: true,
+    started: false,
+    p1Name: null,
+    p2Name: null,
+    p1Sign: null,
+    p2Sign: null,
+    isScoreVisible: false,
+    isSortedByName: false,
+    isSortedByScore: false,
+};
+
 let sortedPlayerScoreMap;
-let isFirstPlayerTurn = true;
-let winCombination = [];
-let winnerData = {};
-let gameStarted = false;
-let p1Name = "";
-let p2Name = "";
-let p1Sign = "";
-let p2Sign = "";
-let isScoreVisible = false;
-let isSortedByName = false;
-let isSortedByScore = false;
 
 document.getElementById("sortNames").hidden = true;
 document.getElementById("sortScores").hidden = true;
 
 const grid = document.querySelector(".playBoard");
 grid.addEventListener("click", function (event) {
-    if (!gameStarted || winCombination.length !== 0 || event.target.innerText !== "") {
+    if (!gameState.started || gameState.winCombination.length !== 0 || event.target.innerText !== "") {
         return;
     }
 
-    const possibleWinSign = isFirstPlayerTurn ? p1Sign : p2Sign;
+    const possibleWinSign = gameState.firstPlayerTurn ? gameState.p1Sign : gameState.p2Sign;
     event.target.innerText = possibleWinSign;
-    event.target.classList.add(isFirstPlayerTurn ? "takenByO" : "takenByX");
+    event.target.classList.add(gameState.firstPlayerTurn ? "takenByO" : "takenByX");
 
     if (isGameFinished(possibleWinSign)) {
         return;
     } else {
-        isFirstPlayerTurn = !isFirstPlayerTurn;
+        printData();
+        gameState.firstPlayerTurn = !gameState.firstPlayerTurn;
         showTurnOfPlayer();
+        printData();
     }
 });
 
 for (let i = 0; i < BOARD_SIZE; i++) {
     const divElement = document.createElement("div");
     divElement.className = "cell";
+    cellsArr[i] = divElement;
     grid.appendChild(divElement);
 }
 
 function isGameFinishedDueToWin(possibleWinSign) {
-    const allCellsArr = document.querySelectorAll(".cell");
     for (const currentState of possibleWinStates) {
-        if (currentState.every((i) => allCellsArr[i].innerText === possibleWinSign)) {
-            winCombination = currentState;
+        if (currentState.every((i) => cellsArr[i].innerText === possibleWinSign)) {
+            gameState.winCombination = currentState;
             return true;
         }
     }
@@ -63,25 +69,19 @@ function isGameFinishedDueToWin(possibleWinSign) {
 }
 
 function populateWinnerData() {
-    if (isFirstPlayerTurn) {
-        winnerData.name = p1Name;
-        winnerData.sign = p1Sign;
+    gameState.winnerData = {};
+    if (gameState.firstPlayerTurn) {
+        gameState.winnerData.name = gameState.p1Name;
+        gameState.winnerData.sign = gameState.p1Sign;
     } else {
-        winnerData.name = p2Name;
-        winnerData.sign = p2Sign;
+        gameState.winnerData.name = gameState.p2Name;
+        gameState.winnerData.sign = gameState.p2Sign;
     }
 }
 
 //no empty space to set a new values
 function isAnyEmptyCellOnGameboard() {
-    const allCells = document.querySelectorAll(".cell");
-    for (let i = 0; i < allCells.length; i++) {
-        if (allCells[i].innerText === "") {
-            return true;
-        }
-    }
-
-    return false;
+    return cellsArr.some((element) => element.innerText === "");
 }
 
 function showDrawMessage() {
@@ -91,22 +91,20 @@ function showDrawMessage() {
 }
 
 function markWinCombination() {
-    const allCellsArr = document.querySelectorAll(".cell");
-    winCombination.forEach((i) => {
-        allCellsArr[i].classList.add("winner");
+    gameState.winCombination.forEach((i) => {
+        cellsArr[i].classList.add("winner");
     });
 }
 
 const clearBoardBtn = document.getElementById("clearBoardBtn");
 clearBoardBtn.addEventListener("click", function () {
-    const allCellsArr = document.querySelectorAll(".cell");
-    for (const currentCell of allCellsArr) {
+    for (const currentCell of cellsArr) {
         currentCell.innerText = "";
         currentCell.className = "cell";
     }
-    winCombination = [];
-    gameStarted = false;
-    isFirstPlayerTurn = true;
+    gameState.winCombination = [];
+    gameState.started = false;
+    gameState.firstPlayerTurn = 0;
     const p1 = document.getElementById("player1Name");
     p1.value = "";
     const s1 = document.getElementById("player1Sign");
@@ -122,9 +120,9 @@ clearBoardBtn.addEventListener("click", function () {
 Need to set timeout as last turn blocked by alert message
 Adding timeout trick allow to DOM to finish page rendering
 */
-function showWinMessage(possibleWinSign) {
+function showWinMessage() {
     setTimeout(() => {
-        alert(winnerData.name + " WON with " + winnerData.sign + "!!!");
+        alert(gameState.winnerData.name + " WON with " + gameState.winnerData.sign + "!!!");
     }, 0);
 }
 
@@ -133,36 +131,36 @@ game.addEventListener("click", function () {
     const regOK = registration();
     if (regOK) {
         freezePlayerOptions();
-        gameStarted = true;
+        gameState.started = true;
     }
 });
 
 function registration() {
     //First player
-    p1Name = document.getElementById("player1Name").value;
-    if (p1Name === null || p1Name === undefined || p1Name.trim() === "") {
+    gameState.p1Name = document.getElementById("player1Name").value;
+    if (gameState.p1Name === null || gameState.p1Name === undefined || gameState.p1Name.trim() === "") {
         alert("Please provide player-1 name!");
         return false;
     }
 
-    if (!playerScoreMap.has(p1Name)) {
-        playerScoreMap.set(p1Name, { name: p1Name, score: 0 });
-        isSortedByName = false;
+    if (!playerScoreMap.has(gameState.p1Name)) {
+        playerScoreMap.set(gameState.p1Name, { name: gameState.p1Name, score: 0 });
+        gameState.isSortedByName = false;
     }
-    p1Sign = document.getElementById("player1Sign").value;
+    gameState.p1Sign = document.getElementById("player1Sign").value;
 
     //Second player
-    p2Name = document.getElementById("player2Name").value;
-    if (p2Name === null || p2Name === undefined || p2Name.trim() === "") {
+    gameState.p2Name = document.getElementById("player2Name").value;
+    if (gameState.p2Name === null || gameState.p2Name === undefined || gameState.p2Name.trim() === "") {
         alert("Please provide player-2 name!");
         return false;
     }
 
-    if (!playerScoreMap.has(p2Name)) {
-        playerScoreMap.set(p2Name, { name: p2Name, score: 0 });
-        isSortedByName = false;
+    if (!playerScoreMap.has(gameState.p2Name)) {
+        playerScoreMap.set(gameState.p2Name, { name: gameState.p2Name, score: 0 });
+        gameState.isSortedByName = false;
     }
-    p2Sign = document.getElementById("player2Sign").value;
+    gameState.p2Sign = document.getElementById("player2Sign").value;
 
     return true;
 }
@@ -177,21 +175,21 @@ function freezePlayerOptions() {
 
 function updateWinnerScore() {
     //update original table
-    playerScoreMap.get(winnerData.name).score += 1;
+    playerScoreMap.get(gameState.winnerData.name).score += 1;
 
     //refresh sorted map
-    if (isSortedByScore) {
+    if (gameState.isSortedByScore) {
         sortedPlayerScoreMap = sortByScoreMap();
     }
 }
 
 function updateDrawScore() {
     //update original table
-    playerScoreMap.get(p1Name).score += 0.5;
-    playerScoreMap.get(p2Name).score += 0.5;
+    playerScoreMap.get(gameState.p1Name).score += 0.5;
+    playerScoreMap.get(gameState.p2Name).score += 0.5;
 
     //refresh sorted map
-    if (isSortedByScore) {
+    if (gameState.isSortedByScore) {
         sortedPlayerScoreMap = sortByScoreMap();
     }
 }
@@ -202,8 +200,8 @@ showScoresBtn.addEventListener("click", function () {
     const sortByNameOpt = document.getElementById("sortNames");
     const sortByScoreOpt = document.getElementById("sortScores");
 
-    isScoreVisible = !isScoreVisible;
-    if (isScoreVisible) {
+    gameState.isScoreVisible = !gameState.isScoreVisible;
+    if (gameState.isScoreVisible) {
         showScoresBtn.innerText = "Hide scores";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
@@ -224,7 +222,7 @@ function createScoreTable() {
     const out = document.getElementById("scoreListOutput");
     const table = document.createElement("table");
     table.border = "1";
-    let scoreDataMap = isSortedByName || isSortedByScore ? sortedPlayerScoreMap : playerScoreMap;
+    let scoreDataMap = gameState.isSortedByName || gameState.isSortedByScore ? sortedPlayerScoreMap : playerScoreMap;
 
     //create headers from map
     const headerRow = document.createElement("tr");
@@ -270,16 +268,16 @@ function refreshScoreTable() {
 const sortNamesBtn = document.getElementById("sortNames");
 sortNamesBtn.addEventListener("click", function () {
     sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => a[0].localeCompare(b[0])));
-    isSortedByName = true;
-    isSortedByScore = false;
+    gameState.isSortedByName = true;
+    gameState.isSortedByScore = false;
     refreshScoreTable();
 });
 
 const sortScoreBtn = document.getElementById("sortScores");
 sortScoreBtn.addEventListener("click", function () {
     sortedPlayerScoreMap = sortByScoreMap();
-    isSortedByName = false;
-    isSortedByScore = true;
+    gameState.isSortedByName = false;
+    gameState.isSortedByScore = true;
     refreshScoreTable();
 });
 
@@ -289,26 +287,26 @@ function sortByScoreMap() {
 
 const clearPlayerListBtn = document.getElementById("clearPlayerList");
 clearPlayerListBtn.addEventListener("click", function () {
-    if (isSortedByName || isSortedByScore) {
+    if (gameState.isSortedByName || gameState.isSortedByScore) {
         sortedPlayerScoreMap.clear();
     }
     playerScoreMap.clear();
     const out = document.getElementById("scoreListOutput");
     out.innerHTML = "";
-    isSortedByName = false;
-    isSortedByScore = false;
+    gameState.isSortedByName = false;
+    gameState.isSortedByScore = false;
 });
 
 function showTurnOfPlayer() {
     const nextName = document.getElementById("nextTurnPlayerName");
     const nextSign = document.getElementById("nextTurnPlayerSign");
 
-    if (isFirstPlayerTurn) {
-        nextName.innerText = p1Name;
-        nextSign.innerText = p1Sign;
+    if (gameState.firstPlayerTurn) {
+        nextName.innerText = gameState.p1Name;
+        nextSign.innerText = gameState.p1Sign;
     } else {
-        nextName.innerText = p2Name;
-        nextSign.innerText = p2Sign;
+        nextName.innerText = gameState.p2Name;
+        nextSign.innerText = gameState.p2Sign;
     }
 }
 
@@ -327,7 +325,7 @@ function isGameFinished(possibleWinSign) {
         updateWinnerScore();
         clearNextTurnFields();
         unfreezePlayerOptions();
-        if (isScoreVisible) {
+        if (gameState.isScoreVisible) {
             refreshScoreTable();
         }
         return true;
@@ -336,11 +334,19 @@ function isGameFinished(possibleWinSign) {
         showDrawMessage();
         clearNextTurnFields();
         unfreezePlayerOptions();
-        if (isScoreVisible) {
+        if (gameState.isScoreVisible) {
             refreshScoreTable();
         }
         return true;
     }
 
     return false;
+}
+
+function printData() {
+    console.log("player_1_name = " + gameState.p1Name);
+    console.log("player_1_sign = " + gameState.p1Sign);
+    console.log("winner combination = " + gameState.winCombination);
+    console.log("firstPlayerTurn = " + gameState.firstPlayerTurn);
+    console.log("started = " + gameState.started);
 }
