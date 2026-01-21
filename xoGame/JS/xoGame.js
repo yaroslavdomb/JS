@@ -229,7 +229,7 @@ showScoresBtn.addEventListener("click", function () {
 
     gameState.isScoreVisible = !gameState.isScoreVisible;
     if (gameState.isScoreVisible) {
-        showScoresBtn.innerText = "Hide scores";
+        showScoresBtn.innerText = "Hide statistic";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
             createScoreInfo();
@@ -238,7 +238,7 @@ showScoresBtn.addEventListener("click", function () {
             out.hidden = false;
         }
     } else {
-        showScoresBtn.innerText = "Show scores";
+        showScoresBtn.innerText = "Show statistic";
         sortByNameOpt.hidden = true;
         sortByScoreOpt.hidden = true;
         out.hidden = true;

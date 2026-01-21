@@ -139,3 +139,10 @@ legend {
     display: flex;
     flex-direction: column;
 }
+
+#scoreListOutput label {
+    text-align: left;
+    display: block;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
