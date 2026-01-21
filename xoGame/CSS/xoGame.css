@@ -15,6 +15,7 @@ h1 {
 }
 
 .gamePack {
+    margin-left: 2rem;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
