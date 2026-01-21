@@ -1,3 +1,6 @@
+import Player from "./Player.js";
+import Match from "./Match.js";
+
 const possibleWinStates = [
     [0, 1, 2],
     [3, 4, 5],
@@ -210,7 +213,7 @@ function updateDrawScore() {
     //update original table
     playerScoreMap.get(gameState.p1Name).score += POINTS_FOR_DRAW;
     playerScoreMap.get(gameState.p2Name).score += POINTS_FOR_DRAW;
-    
+
     //refresh sorted map
     if (gameState.isScoreMapSorted) {
         sortedPlayerScoreMap = sortMapByScore();
@@ -323,7 +326,7 @@ clearPlayerListBtn.addEventListener("click", function () {
     }
     playerScoreMap.clear();
     removeScoreTable();
-    gameState.isScoreMapSorted = false;    
+    gameState.isScoreMapSorted = false;
 });
 
 function removeScoreTable() {
@@ -377,6 +380,7 @@ function isGameFinished(possibleWinSign) {
 }
 
 function finalizeGame() {
+    updateStatistic();
     clearNextTurnFields();
     unfreezePlayerOptions();
     unfreezePlayerList();
@@ -438,4 +442,40 @@ function createScoreInfo() {
     out.appendChild(divElem);
 
     gameState.isScoreInfoCreated = true;
+}
+
+function updateStatistic() {
+    const justFinishedMatch = populateMatchInfo();
+
+    const p1 = new Player(gameState.p1Name);
+    p1.addMatch(justFinishedMatch);
+
+    const p2 = new Player(gameState.p2Name);
+    p2.addMatch(justFinishedMatch);
+}
+
+function populateMatchInfo() {
+    let p1Points;
+    let p2Points;
+    if (gameState.winCombination.length === 0) {
+        p1Points = POINTS_FOR_DRAW;
+        p2Points = POINTS_FOR_DRAW;
+    } else if (gameState.winnerData.name === gameState.p1Name) {
+        p1Points = POINTS_FOR_WIN;
+        p2Points = POINTS_FOR_LOOSE;
+    } else {
+        p1Points = POINTS_FOR_LOOSE;
+        p2Points = POINTS_FOR_WIN;
+    }
+
+    return new Match(
+        gameState.p1Name,
+        gameState.p2Name,
+        gameState.p1Sign,
+        gameState.p2Sign,
+        gameState.winState,
+        p1Points,
+        p2Points,
+        new Date()
+    );
 }
