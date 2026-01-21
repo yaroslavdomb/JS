@@ -57,31 +57,37 @@ h1 {
     background-color: rgb(243, 219, 37) !important;
 }
 
-
 .options {
     width: 13rem;
     background-color: beige;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 36rem;
+    height: 37.25rem;
+    box-sizing: border-box;
+    padding: 0.7rem;
+    border-radius: 1rem;
+    border: 0.3rem solid blueviolet;
+}
+
+.playersOptions fieldset,
+.next-turn {
+    display: block;
+    min-width: 12rem;
     box-sizing: border-box;
     padding: 0.5rem;
+    border: 2px solid black;
+    background-color: beige;
 }
 
 .playersOptions fieldset {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .playersOptions fieldset label,
 .playersOptions fieldset input {
     display: block;
     margin-bottom: 0.5rem;
-}
-
-.next-turn {
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .next-turn .row {
@@ -127,7 +133,7 @@ legend {
 #scoreListOutput {
     width: 13rem;
     background-color: beige;
-    height: 36rem;
+    height: 37.25rem;
     box-sizing: border-box;
     padding: 0.5rem;
     display: flex;
