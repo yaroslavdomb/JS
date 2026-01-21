@@ -150,3 +150,16 @@ legend {
 #scoreListOutput[hidden] {
     display: none !important;
 }
+
+.playersOptions.frozen {
+    opacity: 0.5;
+}
+
+.playersOptions.frozen label,
+.playersOptions.frozen input {
+    color: #777;
+}
+
+.playersOptions.frozen input {
+    background-color: #e0e0e0;
+}

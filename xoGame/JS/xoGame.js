@@ -114,6 +114,7 @@ function clearBoard(clearAll = true) {
     gameState.firstPlayerTurn = true;
     gameState.winnerData = null;
     unfreezePlayerList();
+    freezeClearBoardBtn();
 
     if (clearAll) {
         const p1 = document.getElementById("player1Name");
@@ -126,6 +127,16 @@ function clearBoard(clearAll = true) {
         s2.value = "O";
         unfreezePlayerOptions();
     }
+}
+
+
+function freezeClearBoardBtn () {
+    document.getElementById("clearBoardBtn").disabled = true;
+
+}
+
+function unfreezeClearBoardBtn() {
+    document.getElementById("clearBoardBtn").disabled = false;
 }
 
 /*
@@ -145,8 +156,9 @@ game.addEventListener("click", function () {
         clearBoard(false);
         freezePlayerOptions();
         freezePlayerList();
+        unfreezeClearBoardBtn();
         gameState.started = true;
-        showTurnOfPlayer();
+        showTurnOfPlayer();        
     }
 });
 
@@ -189,15 +201,22 @@ function playersRegistration() {
         gameState.isScoreTableCreated = false;
     }
 
+    //now there is something we can clear from the list
+    unfreezePlayerList();
+
     return true;
 }
 
 function unfreezePlayerOptions() {
-    document.querySelectorAll(".playersOptions input, .playersOptions button").forEach((el) => (el.disabled = false));
+    const container = document.querySelector(".playersOptions");
+    container.classList.remove("frozen");
+    container.querySelectorAll("input, button").forEach((el) => (el.disabled = false));
 }
 
 function freezePlayerOptions() {
-    document.querySelectorAll(".playersOptions input, .playersOptions button").forEach((el) => (el.disabled = true));
+    const container = document.querySelector(".playersOptions");
+    container.classList.add("frozen");
+    container.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
 }
 
 function updateWinnerScore() {
@@ -331,6 +350,7 @@ clearPlayerListBtn.addEventListener("click", function () {
     }
     playerScoreMap.clear();
     removeScoreTable();
+    freezePlayerList();
     gameState.isScoreMapSorted = false;
 });
 
