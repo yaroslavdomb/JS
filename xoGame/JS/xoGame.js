@@ -113,7 +113,9 @@ function clearBoard(clearAll = true) {
     gameState.started = false;
     gameState.firstPlayerTurn = true;
     gameState.winnerData = null;
-    unfreezePlayerList();
+    if (gameState.isScoreTableCreated) {
+        unfreezePlayerList();
+    }
     freezeClearBoardBtn();
 
     if (clearAll) {
