@@ -221,15 +221,15 @@ function updateDrawScore() {
     }
 }
 
-const showScoresBtn = document.getElementById("showScores");
-showScoresBtn.addEventListener("click", function () {
+const showStatisticBtn = document.getElementById("showStatistic");
+showStatisticBtn.addEventListener("click", function () {
     const out = document.getElementById("scoreListOutput");
     const sortByNameOpt = document.getElementById("sortNames");
     const sortByScoreOpt = document.getElementById("sortScores");
 
     gameState.isScoreVisible = !gameState.isScoreVisible;
     if (gameState.isScoreVisible) {
-        showScoresBtn.innerText = "Hide statistic";
+        showStatisticBtn.innerText = "Hide statistic";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
             createScoreInfo();
@@ -238,7 +238,7 @@ showScoresBtn.addEventListener("click", function () {
             out.hidden = false;
         }
     } else {
-        showScoresBtn.innerText = "Show statistic";
+        showStatisticBtn.innerText = "Show statistic";
         sortByNameOpt.hidden = true;
         sortByScoreOpt.hidden = true;
         out.hidden = true;
@@ -291,8 +291,12 @@ function createScoreTable() {
         table.appendChild(row);
     });
 
-    out.appendChild(table);
-
+    if (gameState.isScoreInfoCreated) {
+        const element = document.getElementById("rulesTable");
+        out.insertBefore(table, element);
+    } else {
+        out.appendChild(table);
+    }
     gameState.isScoreTableCreated = true;
     return true;
 }
@@ -422,9 +426,10 @@ function createScoreInfo() {
     const out = document.getElementById("scoreListOutput");
 
     const divElem = document.createElement("div");
+    divElem.setAttribute("id","rulesTable");
     const fieldsetElem = document.createElement("fieldset");
     const legendElem = document.createElement("legend");
-    legendElem.innerText = "Scores Info";
+    legendElem.innerText = "Game rules";
 
     const winPoints = document.createElement("label");
     winPoints.innerText = "Points for each win: " + POINTS_FOR_WIN;
