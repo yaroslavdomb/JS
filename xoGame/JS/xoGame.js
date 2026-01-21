@@ -235,8 +235,8 @@ showStatisticBtn.addEventListener("click", function () {
             createScoreInfo();
             sortByNameOpt.hidden = false;
             sortByScoreOpt.hidden = false;
-            out.hidden = false;
         }
+        out.hidden = false;
     } else {
         showStatisticBtn.innerText = "Show statistic";
         sortByNameOpt.hidden = true;
@@ -426,7 +426,7 @@ function createScoreInfo() {
     const out = document.getElementById("scoreListOutput");
 
     const divElem = document.createElement("div");
-    divElem.setAttribute("id","rulesTable");
+    divElem.setAttribute("id", "rulesTable");
     const fieldsetElem = document.createElement("fieldset");
     const legendElem = document.createElement("legend");
     legendElem.innerText = "Game rules";
