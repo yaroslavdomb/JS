@@ -5,11 +5,22 @@ html {
 body {
     background-color: #333333;
     text-align: center;
+    margin: 0;
 }
 
 h1 {
     text-align: center;
     color: white;
+    margin-bottom: 1rem;
+}
+
+.gamePack {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1.82rem;
+    padding-left: 0;
 }
 
 .playBoard {
@@ -45,31 +56,20 @@ h1 {
     background-color: rgb(243, 219, 37) !important;
 }
 
-.gamePack {
-    display: flex;
-    flex-direction: row;
-}
 
 .options {
+    width: 13rem;
+    background-color: beige;
     display: flex;
     flex-direction: column;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    background-color: beige;
     align-items: center;
+    height: 36rem;
+    box-sizing: border-box;
+    padding: 0.5rem;
 }
 
-[type="button"] {
-    margin: 0.5rem;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: 1px solid black;
-    border-radius: 0.3rem;
-    background-color: #7ef29d;
-}
-
-table {
-    background-color: beige;
+.playersOptions fieldset {
+    margin-bottom: 1rem;
 }
 
 .playersOptions fieldset label,
@@ -78,17 +78,13 @@ table {
     margin-bottom: 0.5rem;
 }
 
-.playersOptions fieldset {
-    margin-top: 0.5rem;
-}
-
 .next-turn {
-    width: 95%;
+    width: 100%;
     box-sizing: border-box;
 }
 
 .next-turn .row {
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
@@ -108,6 +104,18 @@ table {
     min-height: 1.4em;
     overflow: hidden;
     box-sizing: border-box;
+    background-color: #fff;
+}
+
+[type="button"] {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    background-color: #7ef29d;
+    width: 92%;
+    box-sizing: border-box;
 }
 
 legend {
@@ -116,21 +124,11 @@ legend {
 }
 
 #scoreListOutput {
+    width: 13rem;
     background-color: beige;
-}
-
-#scoreListOutput fieldset {
-    margin-top: 1rem;
-    padding: 0.2rem;
-}
-
-#scoreListOutput fieldset legend {
-    padding: 0 0.5rem;
-}
-
-#scoreListOutput fieldset label {
-    text-align: left;
-    padding: 0.25rem;
+    height: 36rem;
+    box-sizing: border-box;
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
 }

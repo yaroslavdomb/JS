@@ -18,6 +18,7 @@ const POINTS_FOR_DRAW = 0.5;
 const POINTS_FOR_LOOSE = 0;
 
 const cellsArr = [];
+const matchList = [];
 const playerScoreMap = new Map();
 const gameState = {
     winCombination: [],
@@ -446,6 +447,7 @@ function createScoreInfo() {
 
 function updateStatistic() {
     const justFinishedMatch = populateMatchInfo();
+    matchList.push(justFinishedMatch);
 
     const p1 = new Player(gameState.p1Name);
     p1.addMatch(justFinishedMatch);
