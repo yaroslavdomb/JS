@@ -300,7 +300,23 @@ function createScoreTable() {
 
     //fill the data
     const tableBody = document.createElement("tbody");
-    scoreDataMap.forEach((val, key) => {
+    fillTableBody(tableBody, scoreDataMap);    
+    table.appendChild(tableBody);
+
+    //append BEFORE rules table
+    if (gameState.isScoreInfoCreated) {
+        const element = document.getElementById("rulesTable");
+        DOM.statisticBlock.insertBefore(table, element);
+    } else {
+        DOM.statisticBlock.appendChild(table);
+    }
+
+    gameState.isScoreTableCreated = true;
+    return true;
+}
+
+function fillTableBody(tableBody, dataSource) {
+    dataSource.forEach((val, key) => {
         const row = document.createElement("tr");
 
         const tdKey = document.createElement("td");
@@ -311,23 +327,8 @@ function createScoreTable() {
         tdValue.innerText = val.score;
         row.appendChild(tdValue);
 
-        tableBody.appendChild(row);        
+        tableBody.appendChild(row);
     });
-    table.appendChild(tableBody);
-
-    if (gameState.isScoreInfoCreated) {
-        const element = document.getElementById("rulesTable");
-        DOM.statisticBlock.insertBefore(table, element);
-    } else {
-        DOM.statisticBlock.appendChild(table);
-    }
-    gameState.isScoreTableCreated = true;
-    return true;
-}
-
-function refreshScoreTable() {
-    removeScoreTable();
-    createScoreTable();
 }
 
 DOM.sortNamesBtn.addEventListener("click", function () {
@@ -499,31 +500,21 @@ function populateMatchInfo() {
     );
 }
 
-// function refreshScoreTable() {
-//     const table = DOM.statisticBlock.querySelector("table");
-//     if (!table) return createScoreTable();
+function refreshScoreTable() {
+    const table = DOM.statisticBlock.querySelector("table");
+    if (!table) {
+        return createScoreTable();
+    }
 
-//     const tbody = document.createElement("tbody");
-//     let scoreDataMap = gameState.isScoreMapSorted ? (sortedPlayerScoreMap ?? playerScoreMap) : playerScoreMap;
+    const tbody = document.createElement("tbody");
+    const scoreDataMap = gameState.isScoreMapSorted ? (sortedPlayerScoreMap ?? playerScoreMap) : playerScoreMap;
 
-//     scoreDataMap.forEach((val, key) => {
-//         const row = document.createElement("tr");
+    fillTableBody(tbody, scoreDataMap);
 
-//         const tdKey = document.createElement("td");
-//         tdKey.innerText = key;
-//         row.appendChild(tdKey);
-
-//         const tdValue = document.createElement("td");
-//         tdValue.innerText = val.score;
-//         row.appendChild(tdValue);
-
-//         tbody.appendChild(row);
-//     });
-
-//     const oldTbody = table.querySelector("tbody");
-//     if (oldTbody) {
-//         table.replaceChild(tbody, oldTbody);
-//     } else {
-//         table.appendChild(tbody);
-//     }
-// }
+    const oldTbody = table.querySelector("tbody");
+    if (oldTbody) {
+        table.replaceChild(tbody, oldTbody);
+    } else {
+        table.appendChild(tbody);
+    }
+}
