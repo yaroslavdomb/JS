@@ -48,7 +48,7 @@ const DOM = {
     player2Sign: document.getElementById("player2Sign"),
     statisticBlock: document.getElementById("statisticBlock"),
     clearPlayerListBtn: document.getElementById("clearPlayerList"),
-    playersData: document.querySelector(".playersData")
+    playersData: document.querySelector(".playersData"),
 };
 
 function setDisabled(DOMElement, value) {
@@ -150,7 +150,7 @@ function clearBoard(clearAll = true) {
         DOM.player1Sign.value = "X";
         DOM.player2Name.value = "";
         DOM.player2Sign.value = "O";
-        
+
         enablePlayersData();
     }
 }
@@ -279,14 +279,10 @@ function createScoreTable() {
     const table = document.createElement("table");
     table.border = "1";
 
-    let scoreDataMap;
-    if (gameState.isScoreMapSorted) {
-        scoreDataMap = sortedPlayerScoreMap ?? playerScoreMap;
-    } else {
-        scoreDataMap = playerScoreMap;
-    }
-
+    const scoreDataMap = gameState.isScoreMapSorted ? (sortedPlayerScoreMap ?? playerScoreMap) : playerScoreMap;
+    
     //create headers from map
+    const headerRowHead = document.createElement("thead");
     const headerRow = document.createElement("tr");
     const firstObject = scoreDataMap.values().next().value;
     if (firstObject === null || firstObject === undefined) {
@@ -299,9 +295,11 @@ function createScoreTable() {
         th.innerText = element;
         headerRow.appendChild(th);
     });
-    table.appendChild(headerRow);
+    headerRowHead.appendChild(headerRow);
+    table.appendChild(headerRowHead);
 
     //fill the data
+    const tableBody = document.createElement("tbody");
     scoreDataMap.forEach((val, key) => {
         const row = document.createElement("tr");
 
@@ -313,8 +311,9 @@ function createScoreTable() {
         tdValue.innerText = val.score;
         row.appendChild(tdValue);
 
-        table.appendChild(row);
+        tableBody.appendChild(row);        
     });
+    table.appendChild(tableBody);
 
     if (gameState.isScoreInfoCreated) {
         const element = document.getElementById("rulesTable");
@@ -496,6 +495,35 @@ function populateMatchInfo() {
         gameState.winState,
         p1Points,
         p2Points,
-        new Date()
+        new Date(),
     );
 }
+
+// function refreshScoreTable() {
+//     const table = DOM.statisticBlock.querySelector("table");
+//     if (!table) return createScoreTable();
+
+//     const tbody = document.createElement("tbody");
+//     let scoreDataMap = gameState.isScoreMapSorted ? (sortedPlayerScoreMap ?? playerScoreMap) : playerScoreMap;
+
+//     scoreDataMap.forEach((val, key) => {
+//         const row = document.createElement("tr");
+
+//         const tdKey = document.createElement("td");
+//         tdKey.innerText = key;
+//         row.appendChild(tdKey);
+
+//         const tdValue = document.createElement("td");
+//         tdValue.innerText = val.score;
+//         row.appendChild(tdValue);
+
+//         tbody.appendChild(row);
+//     });
+
+//     const oldTbody = table.querySelector("tbody");
+//     if (oldTbody) {
+//         table.replaceChild(tbody, oldTbody);
+//     } else {
+//         table.appendChild(tbody);
+//     }
+// }
