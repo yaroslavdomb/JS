@@ -35,18 +35,41 @@ const gameState = {
     isScoreInfoCreated: false,
 };
 
+const DOM = {
+    playBoard: document.querySelector(".playBoard"),
+    startGameBtn: document.getElementById("startGame"),
+    clearBoardBtn: document.getElementById("clearBoardBtn"),
+    showStatisticBtn: document.getElementById("showStatistic"),
+    sortNamesBtn: document.getElementById("sortNames"),
+    sortScoresBtn: document.getElementById("sortScores"),
+    player1Name: document.getElementById("player1Name"),
+    player2Name: document.getElementById("player2Name"),
+    player1Sign: document.getElementById("player1Sign"),
+    player2Sign: document.getElementById("player2Sign"),
+    statisticBlock: document.getElementById("statisticBlock"),
+    clearPlayerListBtn: document.getElementById("clearPlayerList"),
+    playersData: document.querySelector(".playersData")
+};
+
+function setDisabled(DOMElement, value) {
+    DOMElement.disabled = value;
+}
+
+function setHidden(DOMElement, value) {
+    DOMElement.hidden = value;
+}
+
 let sortedPlayerScoreMap;
 
 //initial state once page loaded
-document.getElementById("sortNames").hidden = true;
-document.getElementById("sortScores").hidden = true;
-document.getElementById("scoreListOutput").hidden = true;
-freezePlayerList();
-freezeStatisticView();
-freezeClearBoardBtn();
+setHidden(DOM.sortNamesBtn, true);
+setHidden(DOM.sortScoresBtn, true);
+setHidden(DOM.statisticBlock, true);
+setDisabled(DOM.clearPlayerListBtn, true);
+setDisabled(DOM.showStatisticBtn, true);
+setDisabled(DOM.clearBoardBtn, true);
 
-const grid = document.querySelector(".playBoard");
-grid.addEventListener("click", function (event) {
+DOM.playBoard.addEventListener("click", function (event) {
     if (!gameState.started || gameState.winCombination.length !== 0 || event.target.innerText !== "") {
         return;
     }
@@ -67,7 +90,7 @@ for (let i = 0; i < BOARD_SIZE; i++) {
     const divElement = document.createElement("div");
     divElement.className = "cell";
     cellsArr[i] = divElement;
-    grid.appendChild(divElement);
+    DOM.playBoard.appendChild(divElement);
 }
 
 function getWinCombination(possibleWinSign) {
@@ -107,8 +130,7 @@ function markWinCombination() {
     });
 }
 
-const clearBoardBtn = document.getElementById("clearBoardBtn");
-clearBoardBtn.addEventListener("click", clearBoard);
+DOM.clearBoardBtn.addEventListener("click", clearBoard);
 function clearBoard(clearAll = true) {
     for (const currentCell of cellsArr) {
         currentCell.innerText = "";
@@ -119,31 +141,18 @@ function clearBoard(clearAll = true) {
     gameState.firstPlayerTurn = true;
     gameState.winnerData = null;
     if (gameState.isScoreTableCreated) {
-        unfreezePlayerList();
+        setDisabled(DOM.clearPlayerListBtn, false);
     }
-    freezeClearBoardBtn();
+    setDisabled(DOM.clearBoardBtn, true);
 
     if (clearAll) {
-        const p1 = document.getElementById("player1Name");
-        p1.value = "";
-        const s1 = document.getElementById("player1Sign");
-        s1.value = "X";
-        const p2 = document.getElementById("player2Name");
-        p2.value = "";
-        const s2 = document.getElementById("player2Sign");
-        s2.value = "O";
-        unfreezePlayerOptions();
+        DOM.player1Name.value = "";
+        DOM.player1Sign.value = "X";
+        DOM.player2Name.value = "";
+        DOM.player2Sign.value = "O";
+        
+        enablePlayersData();
     }
-}
-
-
-function freezeClearBoardBtn () {
-    document.getElementById("clearBoardBtn").disabled = true;
-
-}
-
-function unfreezeClearBoardBtn() {
-    document.getElementById("clearBoardBtn").disabled = false;
 }
 
 /*
@@ -156,29 +165,28 @@ function showWinMessage() {
     }, 0);
 }
 
-const game = document.getElementById("startGame");
-game.addEventListener("click", function () {
+DOM.startGameBtn.addEventListener("click", function () {
     const registrationPassed = playersRegistration();
     if (registrationPassed) {
         clearBoard(false);
-        freezePlayerOptions();
-        freezePlayerList();
-        unfreezeClearBoardBtn();
+        disablePlayersData();
+        setDisabled(DOM.clearPlayerListBtn, true);
+        setDisabled(DOM.clearBoardBtn, false);
         gameState.started = true;
-        showTurnOfPlayer();        
+        showTurnOfPlayer();
     }
 });
 
 function playersRegistration() {
     //Gathering info for first player
-    let p1TempName = document.getElementById("player1Name").value;
+    let p1TempName = DOM.player1Name.value;
     if (p1TempName === null || p1TempName === undefined || p1TempName.trim() === "") {
         alert("Please provide player#1 name!");
         return false;
     }
-    let p1TempSign = document.getElementById("player1Sign").value;
+    let p1TempSign = DOM.player1Sign.value;
 
-    let p2TempName = document.getElementById("player2Name").value;
+    let p2TempName = DOM.player2Name.value;
     if (p2TempName === null || p2TempName === undefined || p2TempName.trim() === "") {
         alert("Please provide player#2 name!");
         return false;
@@ -186,7 +194,7 @@ function playersRegistration() {
         alert("Same names, not good, not good");
         return false;
     }
-    let p2TempSign = document.getElementById("player2Sign").value;
+    let p2TempSign = DOM.player2Sign.value;
     if (p1TempSign === p2TempSign) {
         alert("No-no-no, you can't play with the same sign!!!");
         return false;
@@ -209,21 +217,18 @@ function playersRegistration() {
     }
 
     //now there is something we can clear from the list
-    unfreezePlayerList();
-
+    setDisabled(DOM.clearPlayerListBtn, false);
     return true;
 }
 
-function unfreezePlayerOptions() {
-    const container = document.querySelector(".playersOptions");
-    container.classList.remove("frozen");
-    container.querySelectorAll("input, button").forEach((el) => (el.disabled = false));
+function enablePlayersData() {
+    DOM.playersData.classList.remove("frozen");
+    DOM.playersData.querySelectorAll("input, button").forEach((el) => (el.disabled = false));
 }
 
-function freezePlayerOptions() {
-    const container = document.querySelector(".playersOptions");
-    container.classList.add("frozen");
-    container.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
+function disablePlayersData() {
+    DOM.playersData.classList.add("frozen");
+    DOM.playersData.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
 }
 
 function updateWinnerScore() {
@@ -247,27 +252,22 @@ function updateDrawScore() {
     }
 }
 
-const showStatisticBtn = document.getElementById("showStatistic");
-showStatisticBtn.addEventListener("click", function () {
-    const out = document.getElementById("scoreListOutput");
-    const sortByNameOpt = document.getElementById("sortNames");
-    const sortByScoreOpt = document.getElementById("sortScores");
-
+DOM.showStatisticBtn.addEventListener("click", function () {
     gameState.isScoreVisible = !gameState.isScoreVisible;
     if (gameState.isScoreVisible) {
-        showStatisticBtn.innerText = "Hide statistic";
+        DOM.showStatisticBtn.innerText = "Hide statistic";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
             createScoreInfo();
-            sortByNameOpt.hidden = false;
-            sortByScoreOpt.hidden = false;
+            setHidden(DOM.sortNamesBtn, false);
+            setHidden(DOM.sortScoresBtn, false);
         }
-        out.hidden = false;
+        setHidden(DOM.statisticBlock, false);
     } else {
-        showStatisticBtn.innerText = "Show statistic";
-        sortByNameOpt.hidden = true;
-        sortByScoreOpt.hidden = true;
-        out.hidden = true;
+        DOM.showStatisticBtn.innerText = "Show statistic";
+        setHidden(DOM.sortNamesBtn, true);
+        setHidden(DOM.sortScoresBtn, true);
+        setHidden(DOM.statisticBlock, true);
     }
 });
 
@@ -276,7 +276,6 @@ function createScoreTable() {
         return true;
     }
 
-    const out = document.getElementById("scoreListOutput");
     const table = document.createElement("table");
     table.border = "1";
 
@@ -319,9 +318,9 @@ function createScoreTable() {
 
     if (gameState.isScoreInfoCreated) {
         const element = document.getElementById("rulesTable");
-        out.insertBefore(table, element);
+        DOM.statisticBlock.insertBefore(table, element);
     } else {
-        out.appendChild(table);
+        DOM.statisticBlock.appendChild(table);
     }
     gameState.isScoreTableCreated = true;
     return true;
@@ -332,8 +331,7 @@ function refreshScoreTable() {
     createScoreTable();
 }
 
-const sortNamesBtn = document.getElementById("sortNames");
-sortNamesBtn.addEventListener("click", function () {
+DOM.sortNamesBtn.addEventListener("click", function () {
     sortedPlayerScoreMap = new Map([...playerScoreMap.entries()].sort((a, b) => a[0].localeCompare(b[0])));
     gameState.isScoreMapSorted = true;
     refreshScoreTable();
@@ -350,20 +348,18 @@ function sortMapByScore() {
     return new Map([...playerScoreMap.entries()].sort((a, b) => b[1].score - a[1].score));
 }
 
-const clearPlayerListBtn = document.getElementById("clearPlayerList");
-clearPlayerListBtn.addEventListener("click", function () {
+DOM.clearPlayerListBtn.addEventListener("click", function () {
     if (sortedPlayerScoreMap instanceof Map) {
         sortedPlayerScoreMap.clear();
     }
     playerScoreMap.clear();
     removeScoreTable();
-    freezePlayerList();
+    setDisabled(DOM.clearPlayerListBtn, true);
     gameState.isScoreMapSorted = false;
 });
 
 function removeScoreTable() {
-    const out = document.getElementById("scoreListOutput");
-    out.querySelector("table")?.remove();
+    DOM.statisticBlock.querySelector("table")?.remove();
     gameState.isScoreTableCreated = false;
 }
 
@@ -414,22 +410,13 @@ function isGameFinished(possibleWinSign) {
 function finalizeGame() {
     updateStatistic();
     clearNextTurnFields();
-    unfreezePlayerOptions();
-    unfreezePlayerList();
-    unfreezeStatisticView();
+    enablePlayersData();
+    setDisabled(DOM.clearPlayerListBtn, false);
+    setDisabled(DOM.showStatisticBtn, false);
     if (gameState.isScoreVisible) {
         refreshScoreTable();
     }
 }
-
-function freezeStatisticView () {
-    document.getElementById("showStatistic").disabled = true;
-}
-
-function unfreezeStatisticView() {
-    document.getElementById("showStatistic").disabled = false;
-}
-
 
 function printData() {
     console.log("player_1_name = " + gameState.p1Name);
@@ -443,14 +430,6 @@ function populateWinCombination(winState) {
     gameState.winCombination = winState;
 }
 
-function freezePlayerList() {
-    document.getElementById("clearPlayerList").disabled = true;
-}
-
-function unfreezePlayerList() {
-    document.getElementById("clearPlayerList").disabled = false;
-}
-
 /*
 This is static HTML code, so it's better to be created once
 and used each time when need
@@ -459,9 +438,6 @@ function createScoreInfo() {
     if (gameState.isScoreInfoCreated) {
         return;
     }
-
-    const out = document.getElementById("scoreListOutput");
-
     const divElem = document.createElement("div");
     divElem.setAttribute("id", "rulesTable");
     const fieldsetElem = document.createElement("fieldset");
@@ -482,7 +458,7 @@ function createScoreInfo() {
     fieldsetElem.appendChild(drawPoints);
     fieldsetElem.appendChild(loosePoints);
     divElem.appendChild(fieldsetElem);
-    out.appendChild(divElem);
+    DOM.statisticBlock.appendChild(divElem);
 
     gameState.isScoreInfoCreated = true;
 }
