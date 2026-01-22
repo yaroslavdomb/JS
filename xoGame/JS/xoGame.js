@@ -1,3 +1,6 @@
+import Player from "./Player.js";
+import Match from "./Match.js";
+
 const possibleWinStates = [
     [0, 1, 2],
     [3, 4, 5],
@@ -15,6 +18,7 @@ const POINTS_FOR_DRAW = 0.5;
 const POINTS_FOR_LOOSE = 0;
 
 const cellsArr = [];
+const matchList = [];
 const playerScoreMap = new Map();
 const gameState = {
     winCombination: [],
@@ -33,8 +37,13 @@ const gameState = {
 
 let sortedPlayerScoreMap;
 
+//initial state once page loaded
 document.getElementById("sortNames").hidden = true;
 document.getElementById("sortScores").hidden = true;
+document.getElementById("scoreListOutput").hidden = true;
+freezePlayerList();
+freezeStatisticView();
+freezeClearBoardBtn();
 
 const grid = document.querySelector(".playBoard");
 grid.addEventListener("click", function (event) {
@@ -109,7 +118,10 @@ function clearBoard(clearAll = true) {
     gameState.started = false;
     gameState.firstPlayerTurn = true;
     gameState.winnerData = null;
-    unfreezePlayerList();
+    if (gameState.isScoreTableCreated) {
+        unfreezePlayerList();
+    }
+    freezeClearBoardBtn();
 
     if (clearAll) {
         const p1 = document.getElementById("player1Name");
@@ -122,6 +134,16 @@ function clearBoard(clearAll = true) {
         s2.value = "O";
         unfreezePlayerOptions();
     }
+}
+
+
+function freezeClearBoardBtn () {
+    document.getElementById("clearBoardBtn").disabled = true;
+
+}
+
+function unfreezeClearBoardBtn() {
+    document.getElementById("clearBoardBtn").disabled = false;
 }
 
 /*
@@ -141,8 +163,9 @@ game.addEventListener("click", function () {
         clearBoard(false);
         freezePlayerOptions();
         freezePlayerList();
+        unfreezeClearBoardBtn();
         gameState.started = true;
-        showTurnOfPlayer();
+        showTurnOfPlayer();        
     }
 });
 
@@ -185,15 +208,22 @@ function playersRegistration() {
         gameState.isScoreTableCreated = false;
     }
 
+    //now there is something we can clear from the list
+    unfreezePlayerList();
+
     return true;
 }
 
 function unfreezePlayerOptions() {
-    document.querySelectorAll(".playersOptions input, .playersOptions button").forEach((el) => (el.disabled = false));
+    const container = document.querySelector(".playersOptions");
+    container.classList.remove("frozen");
+    container.querySelectorAll("input, button").forEach((el) => (el.disabled = false));
 }
 
 function freezePlayerOptions() {
-    document.querySelectorAll(".playersOptions input, .playersOptions button").forEach((el) => (el.disabled = true));
+    const container = document.querySelector(".playersOptions");
+    container.classList.add("frozen");
+    container.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
 }
 
 function updateWinnerScore() {
@@ -210,31 +240,31 @@ function updateDrawScore() {
     //update original table
     playerScoreMap.get(gameState.p1Name).score += POINTS_FOR_DRAW;
     playerScoreMap.get(gameState.p2Name).score += POINTS_FOR_DRAW;
-    
+
     //refresh sorted map
     if (gameState.isScoreMapSorted) {
         sortedPlayerScoreMap = sortMapByScore();
     }
 }
 
-const showScoresBtn = document.getElementById("showScores");
-showScoresBtn.addEventListener("click", function () {
+const showStatisticBtn = document.getElementById("showStatistic");
+showStatisticBtn.addEventListener("click", function () {
     const out = document.getElementById("scoreListOutput");
     const sortByNameOpt = document.getElementById("sortNames");
     const sortByScoreOpt = document.getElementById("sortScores");
 
     gameState.isScoreVisible = !gameState.isScoreVisible;
-    if (gameState.isScoreVisible) {
-        showScoresBtn.innerText = "Hide scores";
+    if (gameState.isScoreVisible && (gameState.isScoreInfoCreated || gameState.isScoreTableCreated)) {
+        showStatisticBtn.innerText = "Hide statistic";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
             createScoreInfo();
             sortByNameOpt.hidden = false;
             sortByScoreOpt.hidden = false;
-            out.hidden = false;
         }
+        out.hidden = false;
     } else {
-        showScoresBtn.innerText = "Show scores";
+        showStatisticBtn.innerText = "Show statistic";
         sortByNameOpt.hidden = true;
         sortByScoreOpt.hidden = true;
         out.hidden = true;
@@ -287,8 +317,12 @@ function createScoreTable() {
         table.appendChild(row);
     });
 
-    out.appendChild(table);
-
+    if (gameState.isScoreInfoCreated) {
+        const element = document.getElementById("rulesTable");
+        out.insertBefore(table, element);
+    } else {
+        out.appendChild(table);
+    }
     gameState.isScoreTableCreated = true;
     return true;
 }
@@ -323,7 +357,8 @@ clearPlayerListBtn.addEventListener("click", function () {
     }
     playerScoreMap.clear();
     removeScoreTable();
-    gameState.isScoreMapSorted = false;    
+    freezePlayerList();
+    gameState.isScoreMapSorted = false;
 });
 
 function removeScoreTable() {
@@ -377,13 +412,24 @@ function isGameFinished(possibleWinSign) {
 }
 
 function finalizeGame() {
+    updateStatistic();
     clearNextTurnFields();
     unfreezePlayerOptions();
     unfreezePlayerList();
+    unfreezeStatisticView();
     if (gameState.isScoreVisible) {
         refreshScoreTable();
     }
 }
+
+function freezeStatisticView () {
+    document.getElementById("showStatistic").disabled = true;
+}
+
+function unfreezeStatisticView() {
+    document.getElementById("showStatistic").disabled = false;
+}
+
 
 function printData() {
     console.log("player_1_name = " + gameState.p1Name);
@@ -417,9 +463,10 @@ function createScoreInfo() {
     const out = document.getElementById("scoreListOutput");
 
     const divElem = document.createElement("div");
+    divElem.setAttribute("id", "rulesTable");
     const fieldsetElem = document.createElement("fieldset");
     const legendElem = document.createElement("legend");
-    legendElem.innerText = "Scores Info";
+    legendElem.innerText = "Game rules";
 
     const winPoints = document.createElement("label");
     winPoints.innerText = "Points for each win: " + POINTS_FOR_WIN;
@@ -438,4 +485,41 @@ function createScoreInfo() {
     out.appendChild(divElem);
 
     gameState.isScoreInfoCreated = true;
+}
+
+function updateStatistic() {
+    const justFinishedMatch = populateMatchInfo();
+    matchList.push(justFinishedMatch);
+
+    const p1 = new Player(gameState.p1Name);
+    p1.addMatch(justFinishedMatch);
+
+    const p2 = new Player(gameState.p2Name);
+    p2.addMatch(justFinishedMatch);
+}
+
+function populateMatchInfo() {
+    let p1Points;
+    let p2Points;
+    if (gameState.winCombination.length === 0) {
+        p1Points = POINTS_FOR_DRAW;
+        p2Points = POINTS_FOR_DRAW;
+    } else if (gameState.winnerData.name === gameState.p1Name) {
+        p1Points = POINTS_FOR_WIN;
+        p2Points = POINTS_FOR_LOOSE;
+    } else {
+        p1Points = POINTS_FOR_LOOSE;
+        p2Points = POINTS_FOR_WIN;
+    }
+
+    return new Match(
+        gameState.p1Name,
+        gameState.p2Name,
+        gameState.p1Sign,
+        gameState.p2Sign,
+        gameState.winState,
+        p1Points,
+        p2Points,
+        new Date()
+    );
 }
