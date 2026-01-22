@@ -254,7 +254,7 @@ showStatisticBtn.addEventListener("click", function () {
     const sortByScoreOpt = document.getElementById("sortScores");
 
     gameState.isScoreVisible = !gameState.isScoreVisible;
-    if (gameState.isScoreVisible && (gameState.isScoreInfoCreated || gameState.isScoreTableCreated)) {
+    if (gameState.isScoreVisible) {
         showStatisticBtn.innerText = "Hide statistic";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
