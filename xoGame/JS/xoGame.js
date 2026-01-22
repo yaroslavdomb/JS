@@ -37,8 +37,13 @@ const gameState = {
 
 let sortedPlayerScoreMap;
 
+//initial state once page loaded
 document.getElementById("sortNames").hidden = true;
 document.getElementById("sortScores").hidden = true;
+document.getElementById("scoreListOutput").hidden = true;
+freezePlayerList();
+freezeStatisticView();
+freezeClearBoardBtn();
 
 const grid = document.querySelector(".playBoard");
 grid.addEventListener("click", function (event) {
@@ -249,7 +254,7 @@ showStatisticBtn.addEventListener("click", function () {
     const sortByScoreOpt = document.getElementById("sortScores");
 
     gameState.isScoreVisible = !gameState.isScoreVisible;
-    if (gameState.isScoreVisible) {
+    if (gameState.isScoreVisible && (gameState.isScoreInfoCreated || gameState.isScoreTableCreated)) {
         showStatisticBtn.innerText = "Hide statistic";
         let isTableCreated = createScoreTable();
         if (isTableCreated) {
@@ -411,10 +416,20 @@ function finalizeGame() {
     clearNextTurnFields();
     unfreezePlayerOptions();
     unfreezePlayerList();
+    unfreezeStatisticView();
     if (gameState.isScoreVisible) {
         refreshScoreTable();
     }
 }
+
+function freezeStatisticView () {
+    document.getElementById("showStatistic").disabled = true;
+}
+
+function unfreezeStatisticView() {
+    document.getElementById("showStatistic").disabled = false;
+}
+
 
 function printData() {
     console.log("player_1_name = " + gameState.p1Name);
