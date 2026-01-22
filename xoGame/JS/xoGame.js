@@ -9,7 +9,7 @@ const possibleWinStates = [
     [1, 4, 7],
     [2, 5, 8], //vertical
     [0, 4, 8],
-    [2, 4, 6], //diagonals
+    [2, 4, 6] //diagonals
 ];
 
 const BOARD_SIZE = 9;
@@ -32,7 +32,7 @@ const gameState = {
     isScoreVisible: false,
     isScoreMapSorted: false,
     isScoreTableCreated: false,
-    isScoreInfoCreated: false,
+    isScoreInfoCreated: false
 };
 
 const DOM = {
@@ -48,7 +48,7 @@ const DOM = {
     player2Sign: document.getElementById("player2Sign"),
     statisticBlock: document.getElementById("statisticBlock"),
     clearPlayerListBtn: document.getElementById("clearPlayerList"),
-    playersData: document.querySelector(".playersData"),
+    playersData: document.querySelector(".playersData")
 };
 
 function setDisabled(DOMElement, value) {
@@ -280,7 +280,7 @@ function createScoreTable() {
     table.border = "1";
 
     const scoreDataMap = gameState.isScoreMapSorted ? (sortedPlayerScoreMap ?? playerScoreMap) : playerScoreMap;
-    
+
     //create headers from map
     const headerRowHead = document.createElement("thead");
     const headerRow = document.createElement("tr");
@@ -300,7 +300,7 @@ function createScoreTable() {
 
     //fill the data
     const tableBody = document.createElement("tbody");
-    fillTableBody(tableBody, scoreDataMap);    
+    fillTableBody(tableBody, scoreDataMap);
     table.appendChild(tableBody);
 
     //append BEFORE rules table
@@ -493,10 +493,10 @@ function populateMatchInfo() {
         gameState.p2Name,
         gameState.p1Sign,
         gameState.p2Sign,
-        gameState.winState,
+        gameState.winCombination,
         p1Points,
         p2Points,
-        new Date(),
+        new Date()
     );
 }
 
