@@ -47,7 +47,7 @@ function createTask(obj, i) {
     ul.appendChild(li);
 }
 
-function  () {
+function newTask() {
     const obj = {
         subject: "",
         checked: false
