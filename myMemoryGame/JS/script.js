@@ -2,11 +2,11 @@ const cardDeck = [
     { id: 1, name: "Apple", icon: "🍎" },
     { id: 2, name: "Banana", icon: "🍌" },
     { id: 3, name: "Orange", icon: "🍊" },
-    { id: 4, name: "Water melon", icon: "🍉" },
-    { id: 5, name: "Greep", icon: "🍇" },
+    { id: 4, name: "Watermelon", icon: "🍉" },
+    { id: 5, name: "Grapes", icon: "🍇" },
     { id: 8, name: "Finic", icon: "🌴" },
     { id: 9, name: "Olive", icon: "🫒" },
-    { id: 10, name: "Prune", icon: "🍐" },
+    { id: 10, name: "Pear", icon: "🍐" },
     { id: 11, name: "Peach", icon: "🍑" },
     { id: 12, name: "Ananas", icon: "🍍" },
     { id: 13, name: "Mango", icon: "🥭" },
@@ -17,14 +17,37 @@ const cardDeck = [
     { id: 18, name: "Melon", icon: "🍈" }
 ];
 
-const PIC_SHOW_TIME_IN_SEC = 2 * 1000;
+const domElem = {
+    p1: document.getElementsByClassName("player1")[0],
+    p1Header: document.getElementsByClassName("player1")[0].querySelector("header"),
+    p2: document.getElementsByClassName("player2")[0],
+    p2Header: document.getElementsByClassName("player2")[0].querySelector("header")
+};
+
 const board = document.querySelector(".board");
 const cards = [];
+const MATCH_TIME_MILISEC = 800;
+const NO_MATCH_TIME_MILISEC = 2000;
+
 let isFirstPlayer = true;
-let visibleCardController = 0;
+
+/*
+Changed on click on some card
+If it's currently 
+    Even => No cards visible
+    Odd => There is exactly 1 visible card 
+*/
+let visabilityCardsController = 0;
+
+/*
+Block clicking once 2 cards opened
+Will be released at the end of processing
+*/
+let isClickAllowed = true;
 
 function newGame() {
     initCardDeck();
+    initPlayers();
 
     cards.forEach((currentCard) => {
         const cardElement = document.createElement("div");
@@ -37,12 +60,15 @@ function newGame() {
                 return;
             }
 
-            if (visibleCardController % 2 === 0) {
-                visualisation(currentCard, ev);
-                return;
-            } else {
-                visualisation(currentCard, ev);                
-                setTimeout(processTwoVisibleCards, PIC_SHOW_TIME_IN_SEC);
+            if (isClickAllowed) {
+                if (visabilityCardsController % 2 === 0) {
+                    cardVisualisation(currentCard, ev);
+                    return;
+                } else {
+                    isClickAllowed = false;
+                    cardVisualisation(currentCard, ev);
+                    processTwoVisibleCards();
+                }
             }
         });
 
@@ -65,41 +91,59 @@ function initCardDeck() {
 
 function matching(firstVisibleCard, secondVisibleCard) {
     if (isFirstPlayer) {
-        firstVisibleCard.ofPlayer = 1;
-        secondVisibleCard.ofPlayer = 1;
+        firstVisibleCard.owner = 1;
+        secondVisibleCard.owner = 1;
     } else {
-        firstVisibleCard.ofPlayer = 2;
-        secondVisibleCard.ofPlayer = 2;
+        firstVisibleCard.owner = 2;
+        secondVisibleCard.owner = 2;
     }
 
-    showFruitOfPlayers(firstVisibleCard);
+    // Cause of pairing match there is no diff
+    // which card pic we going to show - it's the same
+    showWinCardPicture(firstVisibleCard);
     secondVisibleCard.elem.classList.add("complete");
     firstVisibleCard.elem.classList.add("complete");
 }
 
-function visualisation(currentCard, ev) {
+function cardVisualisation(currentCard, ev) {
     currentCard.isVisible = true;
     ev.target.classList.add("isVisible");
-    visibleCardController++;
+    visabilityCardsController++;
 }
 
-function showFruitOfPlayers(fruit) {
+function showWinCardPicture(winCard) {
     const div = document.createElement("div");
-    div.className = "fruit";
-    div.innerHTML = fruit.icon;
+    div.className = "winCard";
+    div.innerHTML = winCard.icon;
 
-    if (fruit.ofPlayer === 1) {
+    if (winCard.owner === 1) {
         document.querySelector(".player1").appendChild(div);
-    } else if (fruit.ofPlayer === 2) {
+    } else if (winCard.owner === 2) {
         document.querySelector(".player2").appendChild(div);
     }
 }
 
 function processTwoVisibleCards() {
-    const visibleCards = cards.filter((x) => x.isVisible);
+    const visibleCards = cards.filter((card) => card.isVisible);
     const firstVisibleCard = visibleCards[0];
     const secondVisibleCard = visibleCards[1];
+    let pauseGameTime;
 
+    if (firstVisibleCard.id === secondVisibleCard.id) {
+        matching(firstVisibleCard, secondVisibleCard);
+        pauseGameTime = MATCH_TIME_MILISEC;
+    } else {
+        pauseGameTime = NO_MATCH_TIME_MILISEC;
+        isFirstPlayer = !isFirstPlayer;
+    }
+
+    setTimeout(() => {
+        hideCards(firstVisibleCard, secondVisibleCard);
+        setPlayerDesign();
+    }, pauseGameTime);
+}
+
+function hideCards(firstVisibleCard, secondVisibleCard) {
     //invisible on data side
     firstVisibleCard.isVisible = false;
     secondVisibleCard.isVisible = false;
@@ -108,11 +152,19 @@ function processTwoVisibleCards() {
     firstVisibleCard.elem.classList.remove("isVisible");
     secondVisibleCard.elem.classList.remove("isVisible");
 
-    if (firstVisibleCard.id === secondVisibleCard.id) {
-        matching(firstVisibleCard, secondVisibleCard);
-    } else {
-        isFirstPlayer = !isFirstPlayer;
-    }
+    isClickAllowed = true;
+}
+
+function initPlayers() {
+    domElem.p1.classList.add("active");
+    domElem.p2.classList.add("notActive");
+}
+
+function setPlayerDesign() {
+    domElem.p1.classList.toggle("active");
+    domElem.p1.classList.toggle("notActive");
+    domElem.p2.classList.toggle("notActive");
+    domElem.p2.classList.toggle("active");
 }
 
 newGame();

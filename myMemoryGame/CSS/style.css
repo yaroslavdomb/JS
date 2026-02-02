@@ -20,14 +20,23 @@ h1 {
     background-color: white;
     border-radius: 6px;
     min-height: 100%;
-
 }
 
 .frame .player header {
-    background-color: rgb(13, 162, 255);
+    background-color: rgb(0, 221, 255);
     border-radius: 6px 6px 0 0;
     font-size: 20px;
     padding: 6px 0;
+}
+
+.frame .player.active {
+    background-color:white;
+    border:5px red solid;
+}
+
+.frame .player.notActive {
+    background-color:rgba(87, 95, 105);
+    border:none;
 }
 
 .frame .board {
@@ -44,7 +53,7 @@ h1 {
 .card {
     width: 100px;
     height: 100px;
-    background: rgb(107, 245, 22);
+    background: rgb(107, 245, 22);        
     border-radius: 6px;
     display: flex;
     flex-direction: column;
@@ -88,6 +97,6 @@ h1 {
     filter: brightness(0.94);
 }
 
-.fruit {
+.winCard {
     font-size: 80px;
 }
