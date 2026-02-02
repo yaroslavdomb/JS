@@ -1,0 +1,93 @@
+body {
+    background-color: #232323;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    margin: 16px;
+}
+
+.frame {
+    display: grid;
+    grid-template-columns: 150px 1fr 150px;
+    gap: 16px;
+    text-align: center;
+    padding: 0 16px;
+}
+
+.frame .player {
+    background-color: white;
+    border-radius: 6px;
+    min-height: 100%;
+
+}
+
+.frame .player header {
+    background-color: rgb(13, 162, 255);
+    border-radius: 6px 6px 0 0;
+    font-size: 20px;
+    padding: 6px 0;
+}
+
+.frame .board {
+    background-color: white;
+    border-radius: 6px;
+    min-height: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-evenly;
+    padding: 24px 12px;
+}
+
+.card {
+    width: 100px;
+    height: 100px;
+    background: rgb(107, 245, 22);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    scale: 1.1;
+}
+
+.card i {
+    font-size: 40px;
+    font-style: normal;
+}
+
+.card p {
+    margin: 5px;
+}
+
+.card * {
+    display: none;
+    pointer-events: none;
+}
+
+.card.isVisible {
+    box-shadow: 0 0 5px #60606094;
+    transform: matrix3d(1, 0, 4, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1);
+}
+
+.card.isVisible * {
+    display: block;
+}
+
+.card.complete {
+    visibility: hidden;
+}
+
+.card.cheat {
+    filter: brightness(0.94);
+}
+
+.fruit {
+    font-size: 80px;
+}
